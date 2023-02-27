@@ -6,18 +6,18 @@ import {
     Sphere,
     Graticule
 } from 'react-simple-maps';
+import { IPosition } from 'react-tooltip';
 
-const MapChart = ({ setTooltipContent }: { setTooltipContent: (name: string) => void }) => {
-
-    return <div data-tooltip-id='map-tooltip'>
-        <ComposableMap>
+const MapChart = ({ setTooltipContent, setTooltipPosition }: { setTooltipContent: (name: string) => void, setTooltipPosition: (position: IPosition) => void }) => {
+    return <ComposableMap height={490} width={1000} data-tooltip-id='map-tooltip'>
             <Geographies geography='/features.json'>
-                {({ geographies }: { geographies: Array<Geography> }) =>
-                    geographies.map((geo: Geography) => (
+                {({ geographies }: { geographies: Array<any> }) =>
+                    geographies.map((geo: any) => (
                         <Geography
                             key={geo.rsmKey}
                             geography={geo}
-                            onMouseEnter={() => {
+                            onMouseEnter={e => {
+                                setTooltipPosition({x: e.clientX, y: e.clientY});
                                 setTooltipContent(geo.properties.name);
                             }}
                             onMouseLeave={() => {
@@ -41,8 +41,7 @@ const MapChart = ({ setTooltipContent }: { setTooltipContent: (name: string) => 
                     ))
                 }
             </Geographies>
-        </ComposableMap>
-    </div>;
+        </ComposableMap>;
 };
 
 export default React.memo(MapChart);
