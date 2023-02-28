@@ -1,10 +1,11 @@
-import MapChart from './MapChart';
-import { ThemeProvider } from './ThemeProvider';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Dropdown, Label, Menu, Table } from 'semantic-ui-react';
+import { CountryStats, fetchCountryInfo } from './apiCalls';
+import MapChart from './MapChart';
+import { ThemeProvider } from './ThemeProvider';
 
 const countryOptions = [
   { key: 'af', value: 'af', flag: 'af', text: 'Afghanistan' },
@@ -258,28 +259,10 @@ const countryOptions = [
   { key: 'zw', value: 'zw', flag: 'zw', text: 'Zimbabwe' },
 ];
 
-export interface CountryStats {
-  name: string;
-  population: number;
-  capital: string;
-  gini_index: number;
-}
-
-const fetch_country_info_by_code = async ({ code }: { code: string }): Promise<CountryStats> => {
-  const info = await fetch(`https://restcountries.com/v2/alpha/${code}`).then(res => res.json()).then(data => data);
-  return {
-    name: info.name,
-    population: info.population,
-    capital: info.capital,
-    gini_index: info.gini_index,
-  };
-};
-
 export default function App() {
-  const [tooltipContent, setTooltipContent] = useState('test');
+  const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [countryStats, setCountryStats] =
-    useState<CountryStats>({ name: '', population: 0, capital: '', gini_index: 0 });
+  const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
 
   function onMouseUpdate(e: MouseEvent) {
     setTooltipPosition({ x: e.pageX, y: e.pageY });
@@ -294,64 +277,67 @@ export default function App() {
     };
   }, []);
 
-  return (
-    <>
-      <ThemeProvider>
-        <MapChart
-          setTooltipContent={setTooltipContent}
-          setTooltipPosition={setTooltipPosition}
-          setCountryStats={setCountryStats}
-        />
-        <Tooltip id="map-tooltip" position={tooltipPosition}>
-          {countryStats.name}
+  return <>
+    <ThemeProvider>
+      <MapChart
+        setTooltipStats={setTooltipStats}
+        setTooltipPosition={setTooltipPosition}
+        setCountryStats={setCountryStats}
+        countryStats={countryStats}
+      />
+      <Tooltip id='map-tooltip' position={tooltipPosition} offset={20} place='top'>
+        {tooltipStats !== null && <>
+          {tooltipStats.name}
           <ul>
-            <li>population: {countryStats.population}</li>
-            <li>capital: {countryStats.capital}</li>
-            <li>gini index: {countryStats.gini_index}</li>
+            <li>population: {tooltipStats.population}</li>
+            <li>capital: {tooltipStats.capital}</li>
+            <li>gini index: {tooltipStats.giniIndex}</li>
           </ul>
-        </Tooltip>
-      </ThemeProvider>
-      <Container>
-        <Dropdown
-          placeholder="Search country"
-          fluid
-          search
-          selection
-          onChange={async (event, data) => {
-            const country_stats = await fetch_country_info_by_code({ code: data.value?.toString() || '' });
-            setCountryStats(country_stats);
-          }}
-          text={countryStats.name}
-          options={countryOptions}
-        />
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Stat</Table.HeaderCell>
-              <Table.HeaderCell>Value</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+        </>
+        }
+      </Tooltip>
+    </ThemeProvider>
+    <Container>
+      <Dropdown
+        placeholder='Search country'
+        fluid
+        search
+        selection
+        onChange={async (event, data) => {
+          const country_stats = await fetchCountryInfo({ code: data.value?.toString() || '' });
+          setCountryStats(country_stats);
+        }}
+        text={countryStats?.name}
+        options={countryOptions}
+      />
+      {countryStats && <Table celled>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Stat</Table.HeaderCell>
+            <Table.HeaderCell>Value</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
 
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell>Name</Table.Cell>
-              <Table.Cell>{countryStats.name}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Population</Table.Cell>
-              <Table.Cell>{countryStats.population}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Capital City</Table.Cell>
-              <Table.Cell>{countryStats.capital}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Gini Index</Table.Cell>
-              <Table.Cell>{countryStats.gini_index}</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
-      </Container>
-    </>
-  );
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Name</Table.Cell>
+            <Table.Cell>{countryStats?.name}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Population</Table.Cell>
+            <Table.Cell>{countryStats?.population}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Capital City</Table.Cell>
+            <Table.Cell>{countryStats?.capital}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Gini Index</Table.Cell>
+            <Table.Cell>{countryStats?.giniIndex}</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+      }
+    </Container>
+  </>;
 }
