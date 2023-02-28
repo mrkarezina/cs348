@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Dropdown } from 'semantic-ui-react';
+import { Container, Dropdown, Label, Menu, Table } from 'semantic-ui-react';
 
 const countryOptions = [
   { key: 'af', value: 'af', flag: 'af', text: 'Afghanistan' },
@@ -265,6 +265,16 @@ export interface CountryStats {
   gini_index: number;
 }
 
+const fetch_country_info_by_code = async ({ code }: { code: string }): Promise<CountryStats> => {
+  const info = await fetch(`https://restcountries.com/v2/alpha/${code}`).then(res => res.json()).then(data => data);
+  return {
+    name: info.name,
+    population: info.population,
+    capital: info.capital,
+    gini_index: info.gini_index,
+  };
+};
+
 export default function App() {
   const [tooltipContent, setTooltipContent] = useState('test');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -307,8 +317,40 @@ export default function App() {
           fluid
           search
           selection
+          onChange={async (event, data) => {
+            const country_stats = await fetch_country_info_by_code({ code: data.value?.toString() || '' });
+            setCountryStats(country_stats);
+          }}
+          text={countryStats.name}
           options={countryOptions}
         />
+        <Table celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Stat</Table.HeaderCell>
+              <Table.HeaderCell>Value</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Name</Table.Cell>
+              <Table.Cell>{countryStats.name}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Population</Table.Cell>
+              <Table.Cell>{countryStats.population}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Capital City</Table.Cell>
+              <Table.Cell>{countryStats.capital}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Gini Index</Table.Cell>
+              <Table.Cell>{countryStats.gini_index}</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table>
       </Container>
     </>
   );
