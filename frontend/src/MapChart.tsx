@@ -1,60 +1,66 @@
-import React, { useEffect, useState } from 'react';
+import { showNotification } from '@mantine/notifications';
+import React from 'react';
 import {
     ComposableMap,
     Geographies,
     Geography,
-    Sphere,
-    Graticule
 } from 'react-simple-maps';
 import { IPosition } from 'react-tooltip';
-import { CountryStats } from './App';
+import { CountryStats, fetchCountryInfo } from './apiCalls';
 
-const MapChart = ({ setTooltipContent, setTooltipPosition, setCountryStats }: {
-    setTooltipContent: (name: string) => void,
+const MapChart = ({ setTooltipStats, setTooltipPosition, setCountryStats, countryStats }: {
+    setTooltipStats: (stats: CountryStats | null) => void,
     setTooltipPosition: (position: IPosition) => void,
-    setCountryStats: (stats: CountryStats) => void,
-}) => {
-    return <ComposableMap height={490} width={1000} data-tooltip-id='map-tooltip'>
-            <Geographies geography='/features.json'>
-                {({ geographies }: { geographies: Array<any> }) =>
-                    geographies.map((geo: any) => (
-                        <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            onMouseEnter={async e => {
-                                const info = await fetch_country_info({name: geo.properties.name});
-                                const info_object = info[0];
-                                setTooltipPosition({x: e.clientX, y: e.clientY});
-                                setCountryStats({ name:info_object.name, capital:info_object.capital, population:info_object.population, gini_index:info_object.gini })
-                            }}
-                            onMouseLeave={() => {
-                                setTooltipContent('');
-                            }}
-                            style={{
-                                default: {
-                                    fill: "#D6D6DA",
-                                    outline: "none"
-                                },
-                                hover: {
-                                    fill: "#F53",
-                                    outline: "none"
-                                },
-                                pressed: {
-                                    fill: "#E42",
-                                    outline: "none"
-                                }
-                            }}
-                        />
-                    ))
-                }
-            </Geographies>
-        </ComposableMap>;
-};
-
-
-const fetch_country_info = async ({ name }: { name: string }): Promise<string> => {
-    const info = await fetch(`https://restcountries.com/v2/name/${name}`).then(res => res.json()).then(data => data);
-    return info;
-};
+    setCountryStats: (stats: CountryStats | null) => void,
+    countryStats: CountryStats | null
+}) => <ComposableMap height={490} width={1000} data-tooltip-id='map-tooltip'>
+        <Geographies geography='/features.json'>
+            {({ geographies }: { geographies: Array<any> }) =>
+                geographies.map((geo: any) => (
+                    <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        onMouseEnter={async e => {
+                            const infoObj = await fetchCountryInfo({ code: geo.id });
+                            setTooltipPosition({ x: e.clientX, y: e.clientY });
+                            if (infoObj !== undefined) {
+                                setTooltipStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.gini });
+                            } else {
+                                setTooltipStats({ code: geo.id, name: geo.properties.name, capital: 'Not found', population: 0, giniIndex: 0 });
+                                showNotification({ title: 'Error', message: `Could not find data on ${geo.properties.name}` });
+                            }
+                        }}
+                        onMouseLeave={() => setTooltipStats(null)}
+                        onMouseDown={async () => {
+                            if (countryStats?.name === geo.properties.name) {
+                                setCountryStats(null);
+                                return;
+                            }
+                            const infoObj = await fetchCountryInfo({ code: geo.id });
+                            if (infoObj !== undefined) {
+                                setCountryStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.gini });
+                            } else {
+                                showNotification({ title: 'Error', message: `Could not set table for ${geo.properties.name} as no data could be found` });
+                            }
+                        }}
+                        style={{
+                            default: {
+                                fill: geo.id === countryStats?.code ? '#E42' : '#D6D6DA',
+                                outline: 'none',
+                            },
+                            hover: {
+                                fill: '#F53',
+                                outline: 'none',
+                            },
+                            pressed: {
+                                fill: '#E42',
+                                outline: 'none',
+                            },
+                        }}
+                    />
+                ))
+            }
+        </Geographies>
+    </ComposableMap>;
 
 export default React.memo(MapChart);
