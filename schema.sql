@@ -81,7 +81,7 @@ CREATE TABLE Education_Expenditure(
 
 -- Table for User
 CREATE TABLE User(
-    uid INT,
+    user_id VARCHAR(255),
     name VARCHAR(50) NOT NULL,
     password VARCHAR(20) NOT NULL,
     PRIMARY KEY (uid)
@@ -90,10 +90,9 @@ CREATE TABLE User(
 -- Table for Game
 CREATE TABLE Game(
     id INT AUTO_INCREMENT,
-    user_id INT NOT NULL,
+    user_id INT VARCHAR(255),
     score INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES User
         ON DELETE CASCADE
 )
-
