@@ -49,10 +49,10 @@ python manage.py create_db
 
 ## Check tables
 
-Run `\l` inside of the psql CLI.
+Run `\c world_factbook`, followed by `\dt` inside of the psql CLI.
 
 ```
-docker-compose exec db psql --username=hello_flask --dbname=hello_flask_dev
+docker-compose exec db psql --username=postgres --dbname=world_factbook
 ```
 
 # Flask Backend
