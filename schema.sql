@@ -90,7 +90,7 @@ CREATE TABLE User(
 -- Table for Game
 CREATE TABLE Game(
     id INT AUTO_INCREMENT,
-    user_id INT VARCHAR(255),
+    user_id VARCHAR(255),
     score INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES User
