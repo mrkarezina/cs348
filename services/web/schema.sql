@@ -7,7 +7,7 @@ CREATE TABLE Region(
 
 -- Table for Country
 CREATE TABLE Country(
-    id CHAR(3), -- using ISO 3166 standard
+    id CHAR(3), -- using ISO 3166 alpha-3 code
     name VARCHAR(60) NOT NULL,
     region_id INTEGER,
     PRIMARY KEY (id),

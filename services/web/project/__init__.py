@@ -9,6 +9,7 @@ connection = psycopg2.connect(user="user",
                               port="5432",
                               database="world_factbook")
 
+# TODO: is this good practise/safe??
 connection.autocommit = True
 
 @app.route("/")
