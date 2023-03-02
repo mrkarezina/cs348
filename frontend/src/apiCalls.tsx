@@ -13,6 +13,6 @@ export const fetchCountryInfo = async ({ code }: { code: string }): Promise<Coun
         name: info.name,
         population: info.population,
         capital: info.capital,
-        giniIndex: info.gini_index,
+        giniIndex: info.gini,
     };
 };

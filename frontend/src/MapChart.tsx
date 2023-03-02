@@ -21,7 +21,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                             onMouseEnter={async () => {
                                 const infoObj = await fetchCountryInfo({ code: geo.id });
                                 if (infoObj !== undefined) {
-                                    setTooltipStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.gini });
+                                    setTooltipStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.giniIndex });
                                 } else {
                                     setTooltipStats({ code: geo.id, name: geo.properties.name, capital: 'Not found', population: 0, giniIndex: 0 });
                                     showNotification({ title: 'Error', message: `Could not find data on ${geo.properties.name}` });
@@ -35,7 +35,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                                 }
                                 const infoObj = await fetchCountryInfo({ code: geo.id });
                                 if (infoObj !== undefined) {
-                                    setCountryStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.gini });
+                                    setCountryStats({ code: geo.id, name: infoObj.name, capital: infoObj.capital, population: infoObj.population, giniIndex: infoObj.giniIndex });
                                 } else {
                                     showNotification({ title: 'Error', message: `Could not set table for ${geo.properties.name} as no data could be found` });
                                 }
