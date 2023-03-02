@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -261,31 +261,16 @@ const countryOptions = [
 
 export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
-
-  function onMouseUpdate(e: MouseEvent) {
-    setTooltipPosition({ x: e.pageX, y: e.pageY });
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousemove', onMouseUpdate, false);
-    document.addEventListener('mouseenter', onMouseUpdate, false);
-    return () => {
-      document.removeEventListener('mousemove', onMouseUpdate);
-      document.removeEventListener('mouseenter', onMouseUpdate);
-    };
-  }, []);
 
   return <>
     <ThemeProvider>
       <MapChart
         setTooltipStats={setTooltipStats}
-        setTooltipPosition={setTooltipPosition}
         setCountryStats={setCountryStats}
         countryStats={countryStats}
       />
-      <Tooltip id='map-tooltip' position={tooltipPosition} offset={20} place='top'>
+      <Tooltip id='map-tooltip' float offset={20}>
         {tooltipStats !== null && <>
           {tooltipStats.name}
           <ul>
