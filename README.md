@@ -52,7 +52,7 @@ python manage.py create_db
 Run `\c world_factbook`, followed by `\dt` inside of the psql CLI.
 
 ```
-docker-compose exec db psql --username=postgres --dbname=world_factbook
+docker-compose exec db psql --username=user --dbname=world_factbook
 ```
 
 # Flask Backend

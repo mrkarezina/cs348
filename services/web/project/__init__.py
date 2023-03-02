@@ -3,12 +3,13 @@ import psycopg2
 
 
 app = Flask(__name__)
-connection = psycopg2.connect(user="postgres",
+connection = psycopg2.connect(user="user",
                               password="password",
                               host="db",
                               port="5432",
                               database="world_factbook")
 
+# TODO: is this good practise/safe??
 connection.autocommit = True
 
 @app.route("/")
