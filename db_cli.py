@@ -10,10 +10,14 @@ from psycopg2.extras import execute_values
 from psycopg2.errors import DuplicateDatabase
 
 DB_NAME = 'WORLD_FACTBOOK'
-user = input('Enter database username (default postgres): ') or 'postgres'
+
+
+# user = input('Enter database username (default postgres): ') or 'user'
+user = 'user'
+
 # database=
 password = getpass('enter database password: ')
-conn = psycopg2.connect(user='postgres',
+conn = psycopg2.connect(user=user,
                         password=password,
                         host='127.0.0.1',
                         port='5432')
@@ -25,7 +29,7 @@ except DuplicateDatabase:
     pass
 conn.close()
 conn = psycopg2.connect(database=DB_NAME,
-                        user='postgres',
+                        user=user,
                         password=password,
                         host='127.0.0.1',
                         port='5432')

@@ -9,7 +9,10 @@ cli = FlaskGroup(app)
 @cli.command("create_db")
 def create_db():
     cursor = connection.cursor()
+
+    # TODO: do we have/how can we implement error checking on this?
     cursor.execute(open("drop_tables.sql", "r").read())
+    
     print("Creating database...")
     cursor.execute(open("schema.sql", "r").read())
     connection.commit()
