@@ -16,6 +16,7 @@ services:
     image: postgres:13-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./formatted_data:/var/lib/postgresql/data/pgdata
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password

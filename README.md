@@ -17,7 +17,7 @@ population <country>
 > q
 ```
 
-# Loading Data
+# Building Project
 
 First build the image
 ```
@@ -29,10 +29,32 @@ Then start the containers
 docker-compose up
 ```
 
-## Create Tables
+## Load Data
 
+### Create tables
 ```
 docker-compose exec web python manage.py create_db
+```
+
+### Load CSV
+
+See [format script](csv_format_utilities/README.md) for how `formatted_data` folder was created.
+
+```
+docker-compose exec web python manage.py populate_db
+```
+
+### Check tables
+
+Run `\c world_factbook`, followed by `\dt` inside of the psql CLI.
+
+```
+docker-compose exec db psql --username=user --dbname=world_factbook
+```
+
+Run the following SQL command to check if the data inside the population table was loaded successfully.
+```
+TABLE population;
 ```
 
 ### Debugging
@@ -45,14 +67,6 @@ docker-compose exec web sh
 Run script
 ```
 python manage.py create_db
-```
-
-## Check tables
-
-Run `\c world_factbook`, followed by `\dt` inside of the psql CLI.
-
-```
-docker-compose exec db psql --username=user --dbname=world_factbook
 ```
 
 # Flask Backend
