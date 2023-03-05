@@ -60,7 +60,8 @@ def populate_db():
         cursor.execute(f"COPY {table} FROM '{pg_data_path}/{file}' CSV;")
     
     connection.commit()
-
+    cursor.close()
+    
     print("Tables populated successfully")
 
 
