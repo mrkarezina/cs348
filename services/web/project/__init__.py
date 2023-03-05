@@ -17,19 +17,27 @@ def hello_world():
     return jsonify(hello="world")
 
 
-# GET api/get-countries?stat_name={str}&limit={uint}
-# list of top n countries for x stat
+# GET api/get-countries?stat_name={str}&limit={uint}&order_by{str}
+# list of top n/bottom n countries for x stat
 @app.route("/api/get-countries")
 def countries_stats():
-    # TODO: error checking 
+    # TODO: error checking
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit")
+    order_by = request.args.get("order_by")
+    
+    if order_by == "top":
+        order_by = "DESC"
+    elif order_by == "bottom":
+        order_by = "ASC"
+    
     cursor = connection.cursor()
     cursor.execute(f"SELECT country_id, value \
                    FROM {stat_name} \
-                   ORDER BY value DESC \
+                   ORDER BY value {order_by} \
                    LIMIT {limit};")
     connection.commit()
     data = cursor.fetchall()
     cursor.close()
+    
     return jsonify(result=data)
