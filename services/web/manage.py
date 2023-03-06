@@ -14,7 +14,7 @@ def create_db():
     cursor.execute(open("utilities/drop_tables.sql", "r").read())
 
     print("Creating database...")
-    cursor.execute(open("schema.sql", "r").read())
+    cursor.execute(open("utilities/schema.sql", "r").read())
     connection.commit()
     print("Database created successfully")
 
@@ -60,13 +60,12 @@ def populate_db():
         cursor.execute(f"COPY {table} FROM '{pg_data_path}/{file}' CSV;")
     
     connection.commit()
-
+    cursor.close()
+    
     print("Tables populated successfully")
 
 
 # TODO: create makefile script to automatically invoke create_db and populate_db
-
-# 
 
 
 if __name__ == "__main__":

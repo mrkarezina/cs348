@@ -21,6 +21,7 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=world_factbook
+      - PGDATA=/var/lib/postgresql/data/db-files/
 
 volumes:
   postgres_data:
