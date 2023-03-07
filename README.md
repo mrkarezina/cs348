@@ -28,6 +28,11 @@ Then start the containers
 ```
 docker-compose up
 ```
+If this is your first time loading the data, please also run 
+```
+docker container start cs348-web-1
+```
+If there is an existing volume you can skip the step above.
 
 ## Load Data
 
