@@ -4,7 +4,7 @@ path = os.path.abspath(os. path. dirname(__file__))
 
 iso_dict = {}
 
-with open(path + "./iso.csv", 'r') as csvfile:
+with open(path + "/iso.csv", 'r') as csvfile:
     next(csvfile) # Skip the header row.
     datareader = csv.reader(csvfile)
     for row in datareader:
@@ -14,7 +14,7 @@ unused_iso = iso_dict.copy()
 
 countries = []
 
-with open(path + "./countries.csv", 'r') as csvfile:
+with open(path + "/countries.csv", 'r') as csvfile:
     next(csvfile) # Skip the header row.
     datareader = csv.reader(csvfile)
     for row in datareader:

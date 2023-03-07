@@ -7,7 +7,7 @@ path = os.path.abspath(os. path. dirname(__file__))
 
 iso_dict = {}
 
-with open(path + "./iso.csv", 'r') as csvfile:
+with open(path + "/iso.csv", 'r') as csvfile:
     next(csvfile) # Skip the header row.
     datareader = csv.reader(csvfile)
     for row in datareader:
@@ -33,5 +33,5 @@ for filename in os.listdir(directory):
                 content.append([date, iso_dict[row[0]], row[2]])
 
     df = pd.DataFrame(content)
-    df.to_csv(path + "/../services/web/data/" + "processed_" + filename, index=False)
+    df.to_csv(path + "/../services/web/data/" + filename, index=False)
             

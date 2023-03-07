@@ -7,7 +7,7 @@ path = os.path.abspath(os. path. dirname(__file__))
 
 regions = set()
 
-with open(path + "./countries.csv", 'r') as csvfile:
+with open(path + "/countries.csv", 'r') as csvfile:
     next(csvfile) # Skip the header row.
     datareader = csv.reader(csvfile)
     for row in datareader:
@@ -15,5 +15,5 @@ with open(path + "./countries.csv", 'r') as csvfile:
 
 
 df = pd.DataFrame(list(regions), columns=['name'])
-df.to_csv(path + "/regions.csv", index=True)
+df.to_csv(path + "/../services/web/fixed_data/regions.csv", index=True)
 
