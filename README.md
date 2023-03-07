@@ -1,11 +1,9 @@
 # CS 348 Project
 
 ## Database Information
-
 - [PostgreSQL](https://www.postgresql.org/download/)
 
 ### Loading the dataset
-
 ```sh
 python[3] db_cli.py
 Database Commands:
@@ -17,22 +15,12 @@ population <country>
 > q
 ```
 
-# Building Project
-
-First build the image
-```
-docker-compose build
-```
-
-Then start the containers
+## Building the Project
+Build all images and start containers:
 ```
 docker-compose up
 ```
-If this is your first time loading the data, please also run 
-```
-docker container start cs348-web-1
-```
-If there is an existing volume you can skip the step above.
+
 
 ## Load Data
 
