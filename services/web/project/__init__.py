@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 import psycopg2
 
 
@@ -58,7 +58,10 @@ def country_overview():
                          WHERE country_id = '{country_id}'")
         country_value = cursor.fetchone()
         data[stat] = country_value
-    
 
-    return {country_id: data}
+    resp = make_response({country_id: data})
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    
+    return resp
+
     
