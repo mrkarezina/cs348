@@ -1,8 +1,23 @@
 # CS 348 Project
 
 ## Description
+A world stats interface that allows you to learn about different countries and play games.
+
+## Frontend
+## Start the app
+1. Ensure the workign dir is the frontend ; `cd frontend`
+2. Install dependencies ; `yarn`
+3. Start the frontend ; `yarn dev`
+
+### Library Documentation Links
+
+- [React Simple Maps](https://www.react-simple-maps.io/)
+- [React Tooltip](https://react-tooltip.com/)
+- [Mantine documentation](https://mantine.dev/)
+- [Vite documentation](https://vitejs.dev/)
 
 
+## Backend
 ## Building the Project
 Build all images and start containers:
 ```
