@@ -1,22 +1,22 @@
-world_factbook=# select value from population where country_id='USA';
+world_factbook=# SELECT value FROM population WHERE country_id='USA';
    value
 -----------
  337341954
 (1 row)
 
-world_factbook=# select value from area where country_id='CAN';
+world_factbook=# SELECT value FROM area WHERE country_id='CAN';
   value
 ---------
  9984670
 (1 row)
 
-world_factbook=# select value from gini_index where country_id='CHN';
+world_factbook=# SELECT value FROM gini_index WHERE country_id='CHN';
  value
 -------
   38.2
 (1 row)
 
-world_factbook=# select value from education_expenditure where country_id='KOR';
+world_factbook=# SELECT value FROM education_expenditure WHERE country_id='KOR';
  value
 -------
    4.7
