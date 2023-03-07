@@ -15,6 +15,7 @@ docker-compose up
 ### Database Information
 - [PostgreSQL](https://www.postgresql.org/download/)
 
+### Create tables
 ```
 docker-compose exec web python manage.py create_db
 ```
