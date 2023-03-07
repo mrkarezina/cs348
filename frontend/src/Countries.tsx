@@ -1,4 +1,4 @@
-export const countriesMap = {
+export const countriesMap: Record<string, string> = {
   afg: 'Afghanistan',
   alb: 'Albania',
   dza: 'Algeria',
