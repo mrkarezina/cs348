@@ -11,7 +11,8 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: postgres:13-alpine
     volumes:
@@ -22,6 +23,11 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=world_factbook
       - PGDATA=/var/lib/postgresql/data/db-files/
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U user -d world_factbook'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   postgres_data:
