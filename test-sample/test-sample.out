@@ -1,0 +1,63 @@
+world_factbook=# select value from population where country_id='USA';
+   value
+-----------
+ 337341954
+(1 row)
+
+world_factbook=# select value from area where country_id='CAN';
+  value
+---------
+ 9984670
+(1 row)
+
+world_factbook=# select value from gini_index where country_id='CHN';
+ value
+-------
+  38.2
+(1 row)
+
+world_factbook=# select value from education_expenditure where country_id='KOR';
+ value
+-------
+   4.7
+(1 row)
+
+world_factbook=# SELECT country_id, value FROM area ORDER BY value desc LIMIT 3;
+ country_id |  value
+------------+----------
+ RUS        | 17098242
+ ATA        | 14200000
+ CAN        |  9984670
+(3 rows)
+
+world_factbook=# SELECT country_id, value FROM area ORDER BY value asc LIMIT 10;
+ country_id | value
+------------+-------
+ VAT        |     0
+ MCO        |     2
+ GIB        |     7
+ TKL        |    12
+ CCK        |    14
+ NRU        |    21
+ BLM        |    25
+ TUV        |    26
+ MAC        |    28
+ SXM        |    34
+(10 rows)
+
+world_factbook=# SELECT country_id, value FROM gini_index ORDER BY value desc LIMIT 12;
+ country_id | value
+------------+-------
+ ZAF        |    63
+ NAM        |  59.1
+ ZMB        |  57.1
+ CAF        |  56.2
+ SWZ        |  54.6
+ COL        |  54.2
+ MOZ        |    54
+ HKG        |  53.9
+ BWA        |  53.3
+ AGO        |  51.3
+ LCA        |  51.2
+ PAN        |  49.8
+(12 rows)
