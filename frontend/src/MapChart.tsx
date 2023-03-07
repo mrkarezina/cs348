@@ -11,12 +11,13 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
     setTooltipStats: (stats: CountryStats | null) => void,
     setCountryStats: (stats: CountryStats | null) => void,
     countryStats: CountryStats | null
-}) => <ComposableMap height={490} width={1000} data-tooltip-id='map-tooltip'>
+}) => <ComposableMap height={490} width={1000}>
             <Geographies geography='/countries-50m.json'>
                 {({ geographies }: { geographies: Array<any> }) =>
                     geographies.map((geo: any) => (
                         <Geography
                             key={geo.rsmKey}
+                            data-tooltip-id='map-tooltip'
                             geography={geo}
                             onMouseEnter={async () => {
                                 const infoObj = await fetchCountryInfo({ code: geo.id });
