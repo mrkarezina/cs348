@@ -36,7 +36,6 @@ def countries_stats():
                      FROM {stat_name} \
                      ORDER BY value {order_by} \
                      LIMIT {limit};")
-    connection.commit()
     data = cursor.fetchall()
     cursor.close()
     
@@ -57,7 +56,6 @@ def country_overview():
         cursor.execute(f"SELECT value \
                          FROM {stat} \
                          WHERE country_id = '{country_id}'")
-        connection.commit()
         country_value = cursor.fetchone()
         data[stat] = country_value
     
