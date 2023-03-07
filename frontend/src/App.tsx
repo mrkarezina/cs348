@@ -36,15 +36,15 @@ export default function App() {
         />
       </Container>
       <Tooltip id='map-tooltip' float offset={20}>
-        {tooltipStats !== null &&
+        {tooltipStats?.name &&
           <>
             <h3>{tooltipStats.name}</h3>
-            <div>{`Population: ${tooltipStats.population}`}</div>
-            <div>{`Area: ${tooltipStats.area}`}</div>
-            <div>{`Gini Index: ${tooltipStats.giniIndex}`}</div>
-            <div>{`GDP: ${tooltipStats.gdp}`}</div>
-            <div>{`Education Expenditure: ${tooltipStats.education_epd}`}</div>
-            <div>{`Unemployment Rate: ${tooltipStats.unemployment_rate}`}</div>
+            {tooltipStats.population && <div>{`Population: ${tooltipStats.population}`}</div>}
+            {tooltipStats.area && <div>{`Area: ${tooltipStats.area}`}</div>}
+            {tooltipStats.giniIndex && <div>{`Gini Index: ${tooltipStats.giniIndex}`}</div>}
+            {tooltipStats.gdp && <div>{`GDP: ${tooltipStats.gdp}`}</div>}
+            {tooltipStats.education_epd && <div>{`Education Expenditure: ${tooltipStats.education_epd}`}</div>}
+            {tooltipStats.unemployment_rate && <div>{`Unemployment Rate: ${tooltipStats.unemployment_rate}`}</div>}
           </>
         }
       </Tooltip>
