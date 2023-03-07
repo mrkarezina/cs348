@@ -24,17 +24,13 @@ def populate_db():
 
     cursor = connection.cursor()
 
+    print("Populating table")
+
     # OPTION 1
     # with open("data/processed_population.csv", 'r') as f:
     #     next(f) # Skip the header row.
     #     cursor.copy_from(f, 'population', sep=',')
 
-    pg_data_path = "/var/lib/postgresql/data/pgdata"
-
-    # load regions
-    cursor.execute(f"COPY region FROM '{pg_data_path}/regions.csv' CSV;")
-    # load countries
-    cursor.execute(f"COPY country FROM '{pg_data_path}/processed_countries.csv' CSV;")
 
     # TODO: add appropriate volume to db service in docker-compose.yml so Postgres can find the correct csv file.
     # dev notes:
@@ -45,24 +41,11 @@ def populate_db():
     # so far the best option is to use OPTION 2, but this requires the DBMS to find the location of services/web/data.
     # I trust that this can be fixed by adding the appropriate volume to db service in docker-compose.yml so Postgres can find the correct csv file.
 
-    table_files = [
-        ("population", "processed_population.csv"),
-        ("gdp", "processed_real_gdp.csv"),
-        ("unemployment_rate", "processed_unemployment_rate.csv"),
-        ("gini_index", "processed_gini_index.csv"),
-        ("area", "processed_area.csv"),
-        ("education_expenditure", "processed_education_expenditure.csv")
-    ]
-
     # OPTION 2
-    for table, file in table_files:
-        print("Creating table for " + file)
-        cursor.execute(f"COPY {table} FROM '{pg_data_path}/{file}' CSV;")
-    
+    # cursor.execute(f"COPY population FROM 'data/processed_population.csv' CSV;")
+
+
     connection.commit()
-    cursor.close()
-    
-    print("Tables populated successfully")
 
 
 # TODO: create makefile script to automatically invoke create_db and populate_db

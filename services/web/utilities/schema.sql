@@ -20,7 +20,7 @@ CREATE TABLE Country(
 CREATE TABLE Area(
     date_of_info INTEGER,
     country_id CHAR(3),
-    value FLOAT CHECK (value >= 0),
+    value FLOAT CHECK (value > 0),
     PRIMARY KEY (date_of_info, country_id),
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
@@ -31,6 +31,7 @@ CREATE TABLE Population(
     date_of_info INTEGER,
     country_id CHAR(3),
     value FLOAT CHECK (value >= 0),
+    pop_growth_rate FLOAT,
     PRIMARY KEY (date_of_info, country_id),
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
