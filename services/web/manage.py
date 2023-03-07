@@ -47,18 +47,17 @@ def populate_db():
 
 
     fixed_data = "/var/lib/world_factbook/fixed_data"
+    input_data = "/var/lib/world_factbook/input_data"
 
 
     # create Region table
 
-    cursor.execute(open("utilities/drop_tables.sql", "r").read())
+
+    # cursor.execute(f"create temporary table countries_in (name VARCHAR(60), slug VARCHAR(60), region_name VARCHAR(60))")
+    cursor.execute(f"copy Countries_in from '{fixed_data}/countries.csv' with (format csv, HEADER TRUE)")
 
 
-    cursor.execute(f"create temporary table countries_in (name VARCHAR(60), slug VARCHAR(60), region_name VARCHAR(60))")
-    cursor.execute(f"copy countries_in (name, slug, region_name) from '{fixed_data}/countries.csv' with (format csv)")
-
-
-    
+    cursor.execute(f"copy Gdp_in from '{input_data}/real_gdp.csv' with (format csv, HEADER TRUE)")
 
     # # load regions
     # cursor.execute(f"COPY region FROM '{pg_data_path}/regions.csv' CSV;")

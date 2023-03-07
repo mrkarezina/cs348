@@ -5,6 +5,21 @@ CREATE TABLE Region(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE Countries_in(
+    name VARCHAR(60) NOT NULL,
+    slug VARCHAR(60) NOT NULL,
+    region_name VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE Gdp_in(
+    name VARCHAR(60) NOT NULL,
+    slug VARCHAR(60) NOT NULL,
+    value MONEY NOT NULL,
+    date VARCHAR(60) NOT NULL,
+    ranking VARCHAR(60) NOT NULL,
+    region VARCHAR(60) NOT NULL
+);
+
 -- Table for Country
 CREATE TABLE Country(
     id CHAR(3), -- using ISO 3166 alpha-3 code
