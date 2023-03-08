@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, make_response
 import psycopg2
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../../build', static_url_path='/')
 connection = psycopg2.connect(user="user",
                               password="password",
                               host="db",
@@ -11,11 +11,6 @@ connection = psycopg2.connect(user="user",
 
 # TODO: is this good practise/safe??
 connection.autocommit = True
-
-@app.route("/")
-def hello_world():
-    return jsonify(hello="world")
-
 
 # GET api/get-countries?stat_name={str}&limit={uint}&order_by{str}
 # list of top n/bottom n countries for x stat
