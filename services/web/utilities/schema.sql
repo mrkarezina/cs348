@@ -19,7 +19,7 @@ CREATE TABLE Country(
 CREATE TABLE Area(
     date_of_info INTEGER,
     country_id CHAR(3),
-    value FLOAT CHECK (value > 0),
+    value INTEGER CHECK (value >= 0),
     PRIMARY KEY (date_of_info, country_id),
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
@@ -46,8 +46,8 @@ CREATE TABLE Gini_Index(
         ON DELETE CASCADE
 );
 
--- Table for statistic: GDP
-CREATE TABLE GDP(
+-- Table for statistic: Real_GDP
+CREATE TABLE Real_GDP(
     date_of_info INTEGER,
     country_id CHAR(3),
     value FLOAT,
