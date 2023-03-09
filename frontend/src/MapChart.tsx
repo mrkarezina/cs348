@@ -70,7 +70,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                             }}
                             style={{
                                 default: {
-                                    fill: geo.id === countryStats?.code ? '#E42' : '#D6D6DA',
+                                    fill: geo.id !== undefined && geo.id === countryStats?.code ? '#E42' : '#D6D6DA',
                                     outline: 'none',
                                 },
                                 hover: {
