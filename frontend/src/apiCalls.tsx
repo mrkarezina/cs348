@@ -14,7 +14,7 @@ export interface CountryStats {
 }
 
 export const fetchCountryInfo = async ({ code }: { code: string }): Promise<CountryStats> => {
-    const info = await fetch(`${COUNTRY_OVERVIEW_URL}${code}`, { cache: 'force-cache' }).then(res => res.json()).then(data => data);
+    const info = await fetch(`${COUNTRY_OVERVIEW_URL}${code}`).then(res => res.json()).then(data => data);
     return {
         code,
         name: countriesMap[code.toLowerCase()],

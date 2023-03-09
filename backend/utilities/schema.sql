@@ -15,12 +15,11 @@ CREATE TABLE Country(
         ON DELETE SET NULL 
 );
 
-
 -- Table for statistic: Area
 CREATE TABLE Area(
     date_of_info INTEGER,
     country_id CHAR(3),
-    value FLOAT CHECK (value >= 0),
+    value INTEGER CHECK (value >= 0),
     PRIMARY KEY (date_of_info, country_id),
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
@@ -31,6 +30,7 @@ CREATE TABLE Population(
     date_of_info INTEGER,
     country_id CHAR(3),
     value FLOAT CHECK (value >= 0),
+    pop_growth_rate FLOAT,
     PRIMARY KEY (date_of_info, country_id),
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
@@ -46,8 +46,8 @@ CREATE TABLE Gini_Index(
         ON DELETE CASCADE
 );
 
--- Table for statistic: GDP
-CREATE TABLE GDP(
+-- Table for statistic: Real_GDP
+CREATE TABLE Real_GDP(
     date_of_info INTEGER,
     country_id CHAR(3),
     value FLOAT,
@@ -55,7 +55,6 @@ CREATE TABLE GDP(
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
 );
-
 
 -- Table for statistic: Unemployment Rate
 CREATE TABLE Unemployment_Rate(
@@ -66,7 +65,6 @@ CREATE TABLE Unemployment_Rate(
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
 );
-
 
 -- Table for statistic: Education Expenditure
 CREATE TABLE Education_Expenditure(

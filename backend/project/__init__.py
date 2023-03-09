@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, make_response
-import psycopg2
+import psycopg2, os
 
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
@@ -41,9 +41,9 @@ def countries_stats():
 @app.route("/api/country-overview")
 def country_overview():
     country_id = request.args.get("country_id")
-    stats_list = ["area", "education_expenditure",
-                  "gdp", "gini_index", "population",
-                  "unemployment_rate"]
+    stats_list = []
+    for filename in os.listdir("/usr/src/input_data/"):
+        stats_list.append(filename[:-4])
     data = {}
     
     cursor = connection.cursor()
