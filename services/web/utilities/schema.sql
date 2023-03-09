@@ -5,15 +5,6 @@ CREATE TABLE Region(
     PRIMARY KEY (id)
 );
 
--- CREATE TABLE Gdp_in(
---     name VARCHAR(60) NOT NULL,
---     slug VARCHAR(60) NOT NULL,
---     value VARCHAR NOT NULL,
---     date VARCHAR(60) NOT NULL,
---     ranking VARCHAR(60) NOT NULL,
---     region VARCHAR(60) NOT NULL
--- );
-
 -- Table for Country
 CREATE TABLE Country(
     id CHAR(3), -- using ISO 3166 alpha-3 code
@@ -23,7 +14,6 @@ CREATE TABLE Country(
     FOREIGN KEY (region_id) REFERENCES Region
         ON DELETE SET NULL 
 );
-
 
 -- Table for statistic: Area
 CREATE TABLE Area(
@@ -66,7 +56,6 @@ CREATE TABLE GDP(
         ON DELETE CASCADE
 );
 
-
 -- Table for statistic: Unemployment Rate
 CREATE TABLE Unemployment_Rate(
     date_of_info INTEGER,
@@ -76,7 +65,6 @@ CREATE TABLE Unemployment_Rate(
     FOREIGN KEY (country_id) REFERENCES Country
         ON DELETE CASCADE
 );
-
 
 -- Table for statistic: Education Expenditure
 CREATE TABLE Education_Expenditure(
