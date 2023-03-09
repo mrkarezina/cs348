@@ -18,13 +18,12 @@ services:
     image: postgres:13-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - .backend/fixed_data:/var/lib/world_factbook/fixed_data
+      - ./backend/fixed_data:/var/lib/world_factbook/fixed_data
       - ./raw_data:/var/lib/world_factbook/input_data
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=world_factbook
-      # - PGDATA=/var/lib/postgresql/data/db-files/
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U user -d world_factbook'"]
       interval: 5s
