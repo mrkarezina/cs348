@@ -36,24 +36,10 @@ docker-compose exec web python manage.py create_db
 ```
 
 ### Load CSV
-
-See [format script](csv_format_utilities/README.md) for how `formatted_data` folder was created.
-
 ```
 docker-compose exec web python manage.py populate_db
 ```
 
-### Loading the dataset
-```sh
-python[3] db_cli.py
-Database Commands:
-init_db
-population <country>
-> init_db
-> population canada
-('Canada', 'canada', 38232593, '2022 est.', 38, 'North America')
-> q
-```
 
 ### Interacting with the PostgreSQL Database
 Once the project is up and running within its container, run the following command to access the PostgreSQL CLI.
