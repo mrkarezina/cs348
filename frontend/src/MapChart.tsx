@@ -12,7 +12,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
     setCountryStats: (stats: CountryStats | null) => void,
     countryStats: CountryStats | null
 }) => <ComposableMap height={490} width={1000}>
-            <Geographies geography='/countries-50m.json'>
+            <Geographies geography='./countries-50m.json'>
                 {({ geographies }: { geographies: Array<any> }) =>
                     geographies.map((geo: any) => (
                         <Geography
