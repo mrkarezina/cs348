@@ -10,7 +10,6 @@ Build all images and start containers:
 docker-compose up
 ```
 
-
 ## Initializing the Database
 
 ### Database Information
@@ -29,7 +28,9 @@ docker-compose exec web python manage.py create_db
 docker-compose exec web python manage.py populate_db
 ```
 
+## Front End
 
+Once the container has been build and the database populate navigate to `http://localhost:5001/` to interact with the web app.
 
 # Debugging
 
@@ -80,8 +81,3 @@ Run the following SQL command to check if the data inside the population table w
 ```
 TABLE population;
 ```
-
-
-
-## Flask Backend
-Once the web container is started navigate to `http://localhost:5001/` to see the hello world message.
