@@ -12,6 +12,10 @@ connection = psycopg2.connect(user="user",
 # TODO: is this good practise/safe??
 connection.autocommit = True
 
+@app.route("/")
+def index():
+   return app.send_static_file('index.html')
+
 # GET api/get-countries?stat_name={str}&limit={uint}&order_by{str}
 # list of top n/bottom n countries for x stat
 @app.route("/api/get-countries")
