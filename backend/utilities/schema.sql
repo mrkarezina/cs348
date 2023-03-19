@@ -79,9 +79,10 @@ CREATE TABLE Education_Expenditure(
 -- Table for Users
 CREATE TABLE Users(
     user_id UUID,
-    name VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(20) NOT NULL,
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (user_id),
+    CHECK (length(password) > 7)
 );
 
 -- Table for Games

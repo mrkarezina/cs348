@@ -64,3 +64,36 @@ def country_overview():
     return resp
 
     
+# POST api/create-user {username: str, password: str}
+# endpoint to create user storing their username and password
+@app.route("/api/create-user", methods=["POST"])
+def create_user():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+    
+    cursor = connection.cursor()
+    # database constraint ensures password is > 7 characters
+    # and username is unique 
+    cursor.execute(f"INSERT INTO users (username, password) \
+                     VALUES ('{username}', '{password}');")
+    cursor.close()
+    
+    return jsonify({"message": "User created successfully."})
+
+# GET api/get-user?username={str}
+# endpoint returns scores of games user played
+@app.route("/api/get-user")
+def get_user():
+    username = request.args.get("username")
+    
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT score \
+                        FROM games \
+                        WHERE user_id = (SELECT id \
+                                         FROM users \
+                                            WHERE username = '{username}');") 
+    data = cursor.fetchall()
+    cursor.close()
+
+    return jsonify(data)
