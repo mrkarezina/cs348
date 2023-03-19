@@ -97,3 +97,33 @@ def get_user():
     cursor.close()
 
     return jsonify(data)
+
+# POST api/create-game {username: str, score: int}
+# endpoint to create game storing the user and their score
+@app.route("/api/create-game", methods=["POST"])
+def create_game():
+    username = request.args.get("username")
+    score = request.args.get("score")
+
+    cursor = connection.cursor()
+    cursor.execute(f"INSERT INTO games (user_id, score) \
+                        VALUES ((SELECT id \
+                                    FROM users \
+                                        WHERE username = '{username}'), {score});") 
+    cursor.close()
+    return jsonify({"message": "Game created successfully."})
+
+# GET api/get-leaderboard
+# endpoint returns top 10 scores
+@app.route("/api/get-leaderboard")
+def get_leaderboard():
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT username, score \
+                        FROM games \
+                        JOIN users ON games.user_id = users.id \
+                        ORDER BY score DESC \
+                        LIMIT 10;") 
+    data = cursor.fetchall()
+    cursor.close()
+
+    return jsonify(data)
