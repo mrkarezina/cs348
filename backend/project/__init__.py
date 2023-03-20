@@ -58,6 +58,7 @@ def country_overview():
         country_value = cursor.fetchone()
         data[stat] = country_value
 
+    cursor.close()
     resp = make_response({country_id: data})
     resp.headers['Access-Control-Allow-Origin'] = '*'
     
