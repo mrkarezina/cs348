@@ -7,6 +7,7 @@ UniqueViolation = errors.lookup('23505')
 CheckViolation = errors.lookup('23514')
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
+app.run(debug=True)
 connection = psycopg2.connect(user="user",
                               password="password",
                               host="db",
@@ -64,7 +65,6 @@ def country_overview():
 
     cursor.close()
     resp = make_response({country_id: data})
-    resp.headers['Access-Control-Allow-Origin'] = '*'
     
     return resp
 
@@ -90,8 +90,10 @@ def create_user():
 
     
     cursor.close()
-    
-    return jsonify({"message": "User created successfully."})
+
+    resp = make_response({"message": "User created successfully."})
+
+    return resp
 
 # POST api/login-user {username: str, password: str}
 # endpoint to login as user. If user exists and password is correct, return true, otherwise false
@@ -184,4 +186,11 @@ def get_leaderboard():
     data = cursor.fetchall()
     cursor.close()
 
-    return jsonify(data)
+    resp = make_response(data)
+
+    return resp
+
+@app.after_request
+def after_request_func(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response

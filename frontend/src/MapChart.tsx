@@ -43,7 +43,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                                         unemployment_rate: 0,
                                         education_epd: 0,
                                     });
-                                    showNotification({ title: 'Error', message: `Could not find data on ${geo.properties.name}` });
+                                    showNotification({ title: 'Error', message: `Could not find data on ${geo.properties.name}`, color: 'red' });
                                 }
                             }}
                             onMouseLeave={() => setTooltipStats(null)}
@@ -65,7 +65,7 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                                         education_epd: infoObj.education_epd,
                                     });
                                 } else {
-                                    showNotification({ title: 'Error', message: `Could not set table for ${geo.properties.name} as no data could be found` });
+                                    showNotification({ title: 'Error', message: `Could not set table for ${geo.properties.name} as no data could be found`, color: 'red'});
                                 }
                             }}
                             style={{
