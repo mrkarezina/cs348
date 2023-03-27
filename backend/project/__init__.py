@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, make_response
 import psycopg2, os
+import uuid
 
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
@@ -72,18 +73,19 @@ def create_user():
     data = request.get_json()
     username = data["username"]
     password = data["password"]
+    user_uuid = uuid.uuid4()
     
     cursor = connection.cursor()
     # database constraint ensures password is > 7 characters
-    # and username is unique 
-    cursor.execute(f"INSERT INTO users (username, password) \
-                     VALUES ('{username}', '{password}');")
+    # and username is unique
+    cursor.execute(f"INSERT INTO users (user_id, username, password) \
+                     VALUES ('{user_uuid}', '{username}', '{password}');")
     cursor.close()
     
     return jsonify({"message": "User created successfully."})
 
 # GET api/get-user?username={str}
-# endpoint returns scores of games user played
+# endpoint returns array of scores corresponding to games user played
 @app.route("/api/get-user")
 def get_user():
     username = request.args.get("username")
@@ -91,10 +93,11 @@ def get_user():
     cursor = connection.cursor()
     cursor.execute(f"SELECT score \
                         FROM games \
-                        WHERE user_id = (SELECT id \
+                        WHERE user_id = (SELECT user_id \
                                          FROM users \
                                             WHERE username = '{username}');") 
     data = cursor.fetchall()
+    data = [score[0] for score in data]
     cursor.close()
 
     return jsonify(data)
@@ -103,12 +106,13 @@ def get_user():
 # endpoint to create game storing the user and their score
 @app.route("/api/create-game", methods=["POST"])
 def create_game():
-    username = request.args.get("username")
-    score = request.args.get("score")
+    data = request.get_json()
+    username = data["username"]
+    score = data["score"]
 
     cursor = connection.cursor()
     cursor.execute(f"INSERT INTO games (user_id, score) \
-                        VALUES ((SELECT id \
+                        VALUES ((SELECT user_id \
                                     FROM users \
                                         WHERE username = '{username}'), {score});") 
     cursor.close()
@@ -121,7 +125,7 @@ def get_leaderboard():
     cursor = connection.cursor()
     cursor.execute(f"SELECT username, score \
                         FROM games \
-                        JOIN users ON games.user_id = users.id \
+                        JOIN users ON games.user_id = users.user_id \
                         ORDER BY score DESC \
                         LIMIT 10;") 
     data = cursor.fetchall()
