@@ -75,7 +75,11 @@ def create_user():
     password = data["password"]
     user_uuid = uuid.uuid4()
     
+    if len(password) <= 7:
+        return jsonify({"error": "Please ensure that your password is greater than 7 characters"})
+    
     cursor = connection.cursor()
+
     # database constraint ensures password is > 7 characters
     # and username is unique
     cursor.execute(f"INSERT INTO users (user_id, username, password) \
