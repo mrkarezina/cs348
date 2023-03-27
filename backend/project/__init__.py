@@ -130,7 +130,7 @@ def get_user():
     data = [score[0] for score in data]
     cursor.close()
 
-    return jsonify(data)
+    return jsonify({"scores": data})
 
 # GET api/game
 # endpoint returns list of 5 random country and area tuples

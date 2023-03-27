@@ -3,6 +3,7 @@ import { countriesMap } from './Countries';
 const BASE_API_URL = 'http://localhost:5001/api';
 const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country-overview?country_id=`;
 const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
+const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;
 
 export interface CountryStats {
     code: string;
@@ -22,6 +23,10 @@ export interface UserSignUpInfo {
 
 export interface Message {
     message: string;
+}
+
+export interface UserInfo {
+    scores: string[];
 }
 
 export const fetchCountryInfo = async ({ code }: { code: string }): Promise<CountryStats> => {
@@ -49,4 +54,9 @@ export const createNewUser = async (user_signup_info: UserSignUpInfo): Promise<M
     return {
         message
     }
+}
+
+// get score for the logined user
+export const getUserInfo = async (username: string): Promise<UserInfo> => {
+    return await fetch(`${USER_INFO_URL}${username}`).then(res => res.json()).then(data => data);
 }

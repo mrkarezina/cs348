@@ -3,7 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown } from 'semantic-ui-react';
-import { CountryStats, fetchCountryInfo } from './apiCalls';
+import { CountryStats, UserInfo, fetchCountryInfo } from './apiCalls';
 import MapChart from './MapChart';
 import { ThemeProvider } from './ThemeProvider';
 import { countryOptions } from './Countries';
@@ -51,7 +51,7 @@ export default function App() {
           <Container size='xl'>
             {username == null ? 
               <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login / Sign up</Button> :
-              <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
+              <ActionIcon><Avatar onClick={() => setDrawerTitle(`${username}'s Profile`)} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
           </Container>
           <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
             <Box maw={300} mx='auto'>
@@ -60,8 +60,8 @@ export default function App() {
                 setDrawerTitle('Scores');
               }} />}
 
-              {drawerTitle === 'Profile' && <UserProfile logout={() => {
-                setUsername(username);
+              {username != null && drawerTitle === `${username}'s Profile` && <UserProfile username={username} logout={() => {
+                setUsername(null);
                 setDrawerTitle(null);
               }} />}
 
