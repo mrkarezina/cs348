@@ -4,7 +4,11 @@ WORKDIR /usr/src/app
 # TODO: if there's a yarn.lock file use
 # COPY frontend/package.json frontend/yarn.lock ./
 COPY frontend/ ./
-RUN yarn install
+RUN yarn install \
+  --prefer-offline \
+  --frozen-lockfile \
+  --non-interactive \
+  --production=false
 RUN yarn build
 
 # build the api

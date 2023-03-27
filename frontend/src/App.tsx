@@ -70,13 +70,11 @@ export default function App() {
         </Drawer>
       </Flex>
 
-      <Container style={{ width: 2000, height: 900 }}>
-        <MapChart
-          setTooltipStats={setTooltipStats}
-          setCountryStats={setCountryStats}
-          countryStats={countryStats}
-        />
-      </Container>
+      <MapChart
+        setTooltipStats={setTooltipStats}
+        setCountryStats={setCountryStats}
+        countryStats={countryStats}
+      />
 
       <Tooltip id='map-tooltip' float offset={20}>
         {tooltipStats?.name &&

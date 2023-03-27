@@ -7,7 +7,6 @@ UniqueViolation = errors.lookup('23505')
 CheckViolation = errors.lookup('23514')
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
-app.run(debug=True)
 connection = psycopg2.connect(user="user",
                               password="password",
                               host="db",
