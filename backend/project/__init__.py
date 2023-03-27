@@ -92,9 +92,29 @@ def create_user():
     
     return jsonify({"message": "User created successfully."})
 
+# POST api/login-user {username: str, password: str}
+# endpoint to login as user. If user exists and password is correct, return true, otherwise false
+@app.route("/api/login-user", methods=["POST"])
+def login_user():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+
+    cursor = connection.cursor()
+
+    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM users WHERE username = '{username}' AND password = '{password}');")
+    data = str(cursor.fetchone()[0])
+    cursor.close()
+
+    if data == 'False':
+        return jsonify({"error": "Incorrect credentials."})
+    else:
+        return jsonify({"message": "Correct credentials."})
+    
+    
 # GET api/get-user?username={str}
 # endpoint returns array of scores corresponding to games user played
-@app.route("/api/get-user")
+@app.route("/api/get-user-scores")
 def get_user():
     username = request.args.get("username")
     
@@ -102,8 +122,8 @@ def get_user():
     cursor.execute(f"SELECT score \
                         FROM games \
                         WHERE user_id = (SELECT user_id \
-                                         FROM users \
-                                            WHERE username = '{username}');") 
+                                        FROM users \
+                                        WHERE username = '{username}');") 
     data = cursor.fetchall()
     data = [score[0] for score in data]
     cursor.close()
@@ -121,8 +141,8 @@ def create_game():
     cursor = connection.cursor()
     cursor.execute(f"INSERT INTO games (user_id, score) \
                         VALUES ((SELECT user_id \
-                                    FROM users \
-                                        WHERE username = '{username}'), {score});") 
+                                FROM users \
+                                WHERE username = '{username}'), {score});") 
     cursor.close()
     return jsonify({"message": "Game created successfully."})
 
