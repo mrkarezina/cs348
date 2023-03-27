@@ -2,7 +2,15 @@
 
 ## Description
 A world stats interface that allows you to learn about different countries and play games.
+![image](https://user-images.githubusercontent.com/57971748/228081489-cbc4c5d8-fc1b-4e13-836f-f0b24f7e075d.png)
 
+Features:
+1. View country stats when hovering on the interative map - implemented
+2. Rank countries by stats - endpoints implemented
+3. User sign up and login - implemented
+4. Country stat quiz - endpoints implemented
+5. User profile with scoring history - implemented
+6. Score leaderboard - endpoints implemented
 
 ## Building the Project
 Build all images and start containers:
