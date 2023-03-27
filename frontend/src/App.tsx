@@ -22,7 +22,7 @@ export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
 
-  const [username, setUsername] = useCookie('username');
+  const [username, setUsername] = useCookie('username', null);
 
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerTitle, setDrawerTitle] = useState<string | null>(null);
@@ -31,9 +31,9 @@ export default function App() {
     <ThemeProvider>
 
       {/* top bar */}
-      <Flex direction='row' justify='space-around'>
+      <Flex direction='row' justify='flex-end'>
         {/* <Container style={{ margin: 18, width: 400 }} fluid> */}
-          {/* <Container size="xl"> */}
+          <Container size="sm">
             <Dropdown
               placeholder='Search country'
               fluid
@@ -46,10 +46,12 @@ export default function App() {
               text={countryStats?.name}
               options={countryOptions}
             />
-          {/* </Container> */}
-          {username === null ? 
-            <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login / Sign up</Button> :
-            <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]}</Avatar></ActionIcon>}
+          </Container>
+          <Container size="xl">
+            {username == null ? 
+              <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login / Sign up</Button> :
+              <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]}</Avatar></ActionIcon>}
+          </Container>
 
         {/* </Container> */}
 

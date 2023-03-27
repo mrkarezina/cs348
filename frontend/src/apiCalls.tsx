@@ -42,8 +42,7 @@ export const fetchCountryInfo = async ({ code }: { code: string }): Promise<Coun
 export const createNewUser = async (user_signup_info: UserSignUpInfo): Promise<Message> => {
     const message = await fetch(USER_SIGN_UP_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-
+        headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(user_signup_info)
     }).then(res => res.json()).then(data => data);
 

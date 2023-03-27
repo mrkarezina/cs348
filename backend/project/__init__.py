@@ -192,4 +192,5 @@ def get_leaderboard():
 @app.after_request
 def after_request_func(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
