@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, make_response
 import psycopg2, os
 import uuid
+from psycopg2 import errors
+from psycopg2.errorcodes import UNIQUE_VIOLATION
 
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
@@ -17,7 +19,7 @@ connection.autocommit = True
 def index():
    return app.send_static_file('index.html')
 
-# GET api/get-countries?stat_name={str}&limit={uint}&order_by{str}
+# GET api/get-countries?stat_name={str}&limit={uint}&order_by={str}
 # list of top n/bottom n countries for x stat
 @app.route("/api/get-countries")
 def countries_stats():
@@ -32,10 +34,10 @@ def countries_stats():
         order_by = "ASC"
     
     cursor = connection.cursor()
-    cursor.execute(f"SELECT country_id, value \
-                     FROM {stat_name} \
-                     ORDER BY value {order_by} \
-                     LIMIT {limit};")
+    cursor.execute("SELECT country_id, value \
+                     FROM %s \
+                     ORDER BY value %s \
+                     LIMIT %s;" % (stat_name, order_by, limit))
     data = cursor.fetchall()
     cursor.close()
     
@@ -53,9 +55,9 @@ def country_overview():
     
     cursor = connection.cursor()
     for stat in stats_list:
-        cursor.execute(f"SELECT value \
-                         FROM {stat} \
-                         WHERE country_id = '{country_id}'")
+        cursor.execute("SELECT value \
+                        FROM %s \
+                        WHERE country_id = '%s';" % (stat, country_id))
         country_value = cursor.fetchone()
         data[stat] = country_value
 
@@ -75,27 +77,53 @@ def create_user():
     password = data["password"]
     user_uuid = uuid.uuid4()
     
+    if len(password) <= 7:
+        return jsonify({"error": "Please ensure that your password is greater than 7 characters."})
+    
     cursor = connection.cursor()
-    # database constraint ensures password is > 7 characters
-    # and username is unique
-    cursor.execute(f"INSERT INTO users (user_id, username, password) \
-                     VALUES ('{user_uuid}', '{username}', '{password}');")
+
+    try:
+        cursor.execute("INSERT INTO users (user_id, username, password) \
+                        VALUES ('%s', '%s', '%s');" % (user_uuid, username, password))
+    except errors.lookup(UNIQUE_VIOLATION):
+        return jsonify({"error": f"{username} already exists, please use a different username."})
+    
     cursor.close()
     
     return jsonify({"message": "User created successfully."})
 
+# POST api/login-user {username: str, password: str}
+# endpoint to login as user. If user exists and password is correct, return true, otherwise false
+@app.route("/api/login-user", methods=["POST"])
+def login_user():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM users WHERE username = '%s' AND password = '%s');" % (username, password))
+    data = str(cursor.fetchone()[0])
+    cursor.close()
+
+    if data == 'False':
+        return jsonify({"error": "Incorrect credentials."})
+    else:
+        return jsonify({"message": "Correct credentials."})
+    
+
 # GET api/get-user?username={str}
 # endpoint returns array of scores corresponding to games user played
-@app.route("/api/get-user")
+@app.route("/api/get-user-scores")
 def get_user():
     username = request.args.get("username")
     
     cursor = connection.cursor()
-    cursor.execute(f"SELECT score \
-                        FROM games \
-                        WHERE user_id = (SELECT user_id \
-                                         FROM users \
-                                            WHERE username = '{username}');") 
+    cursor.execute("SELECT score \
+                    FROM games \
+                    WHERE user_id = (SELECT user_id \
+                                    FROM users \
+                                    WHERE username = '%s');" % username) 
     data = cursor.fetchall()
     data = [score[0] for score in data]
     cursor.close()
@@ -135,10 +163,10 @@ def create_game():
     score = data["score"]
 
     cursor = connection.cursor()
-    cursor.execute(f"INSERT INTO games (user_id, score) \
-                        VALUES ((SELECT user_id \
-                                    FROM users \
-                                        WHERE username = '{username}'), {score});") 
+    cursor.execute("INSERT INTO games (user_id, score) \
+                    VALUES ((SELECT user_id \
+                            FROM users \
+                            WHERE username = '%s'), %s);" % (username, score)) 
     cursor.close()
     return jsonify({"message": "Game created successfully."})
 
@@ -147,11 +175,11 @@ def create_game():
 @app.route("/api/get-leaderboard")
 def get_leaderboard():
     cursor = connection.cursor()
-    cursor.execute(f"SELECT username, score \
-                        FROM games \
-                        JOIN users ON games.user_id = users.user_id \
-                        ORDER BY score DESC \
-                        LIMIT 10;") 
+    cursor.execute("SELECT username, score \
+                    FROM games \
+                    JOIN users ON games.user_id = users.user_id \
+                    ORDER BY score DESC \
+                    LIMIT 10;") 
     data = cursor.fetchall()
     cursor.close()
 
