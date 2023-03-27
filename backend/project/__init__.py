@@ -102,9 +102,9 @@ def get_user():
 
     return jsonify(data)
 
-# POST api/create-game {username: str, score: int}
-# endpoint to create game storing the user and their score
-@app.route("/api/create-game", methods=["POST"])
+# POST api/game-result {username: str, score: int}
+# endpoint to store game result of a user
+@app.route("/api/game-result", methods=["POST"])
 def create_game():
     data = request.get_json()
     username = data["username"]
