@@ -50,5 +50,3 @@ export const createNewUser = async (user_signup_info: UserSignUpInfo): Promise<M
         message
     }
 }
-
-// export const getUserInfo = 

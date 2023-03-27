@@ -7,7 +7,7 @@ import { CountryStats, fetchCountryInfo } from './apiCalls';
 import MapChart from './MapChart';
 import { ThemeProvider } from './ThemeProvider';
 import { countryOptions } from './Countries';
-import { Container, Drawer, Button, Group, Flex } from '@mantine/core';
+import { Container, Drawer, Button, Group, Flex, Center, Space } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TextInput } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
@@ -31,12 +31,12 @@ export default function App() {
     <ThemeProvider>
 
       {/* top bar */}
-      <Flex direction='row' justify='flex-end'>
-        {/* <Container style={{ margin: 18, width: 400 }} fluid> */}
-          <Container size="sm">
+      <Flex justify={"flex-end"} style={{ marginTop: 8 }}>
+          <Space w="md"  style={{ flex: 7.5 }}/>
+          <Container>
             <Dropdown
               placeholder='Search country'
-              fluid
+              style={{ width: 400 }}
               search
               selection
               onChange={async (event, data) => {
@@ -47,13 +47,14 @@ export default function App() {
               options={countryOptions}
             />
           </Container>
-          <Container size="xl">
+          <Space w="md"  style={{ flex: 6 }}/>
+          <Container size='xl'>
             {username == null ? 
               <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login / Sign up</Button> :
               <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]}</Avatar></ActionIcon>}
           </Container>
+      </Flex>
 
-        {/* </Container> */}
 
         <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
           <Box maw={300} mx='auto'>
@@ -70,7 +71,6 @@ export default function App() {
             {drawerTitle === 'Game' && <Game />}
           </Box>
         </Drawer>
-      </Flex>
 
       <MapChart
         setTooltipStats={setTooltipStats}
