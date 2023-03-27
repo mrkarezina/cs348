@@ -51,26 +51,26 @@ export default function App() {
           <Container size='xl'>
             {username == null ? 
               <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login / Sign up</Button> :
-              <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]}</Avatar></ActionIcon>}
+              <ActionIcon><Avatar onClick={() => setDrawerTitle('Profile')} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
           </Container>
+          <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
+            <Box maw={300} mx='auto'>
+              {drawerTitle === 'Login / Sign up' && <LoginSignUp setUsername={username => {
+                setUsername(username);
+                setDrawerTitle('Scores');
+              }} />}
+
+              {drawerTitle === 'Profile' && <UserProfile logout={() => {
+                setUsername(username);
+                setDrawerTitle(null);
+              }} />}
+
+              {drawerTitle === 'Game' && <Game />}
+            </Box>
+          </Drawer>
       </Flex>
 
 
-        <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
-          <Box maw={300} mx='auto'>
-            {drawerTitle === 'Login / Sign up' && <LoginSignUp setUsername={username => {
-              setUsername(username);
-              setDrawerTitle('Scores');
-            }} />}
-
-            {drawerTitle === 'Profile' && <UserProfile logout={() => {
-              setUsername(username);
-              setDrawerTitle(null);
-            }} />}
-
-            {drawerTitle === 'Game' && <Game />}
-          </Box>
-        </Drawer>
 
       <MapChart
         setTooltipStats={setTooltipStats}
