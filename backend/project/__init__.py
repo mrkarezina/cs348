@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, make_response
 import psycopg2, os
 import uuid
+from psycopg2 import errors
+from psycopg2.errorcodes import UNIQUE_VIOLATION
 
 
 app = Flask(__name__, static_folder='../../build', static_url_path='/')
@@ -76,14 +78,16 @@ def create_user():
     user_uuid = uuid.uuid4()
     
     if len(password) <= 7:
-        return jsonify({"error": "Please ensure that your password is greater than 7 characters"})
+        return jsonify({"error": "Please ensure that your password is greater than 7 characters."})
     
     cursor = connection.cursor()
 
-    # database constraint ensures password is > 7 characters
-    # and username is unique
-    cursor.execute(f"INSERT INTO users (user_id, username, password) \
-                     VALUES ('{user_uuid}', '{username}', '{password}');")
+    try:
+        cursor.execute(f"INSERT INTO users (user_id, username, password) \
+                        VALUES ('{user_uuid}', '{username}', '{password}');")
+    except errors.lookup(UNIQUE_VIOLATION):
+        return jsonify({"error": f"{username} already exists, please use a different username."})
+    
     cursor.close()
     
     return jsonify({"message": "User created successfully."})
