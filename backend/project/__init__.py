@@ -102,9 +102,33 @@ def get_user():
 
     return jsonify(data)
 
-# POST api/game-result {username: str, score: int}
+# GET api/game
+# endpoint returns list of 5 random country and area tuples
+# [(country_id, area), ...]
+@app.route("/api/game")
+def get_game():
+    cursor = connection.cursor()
+
+    cursor.execute(f"SELECT country_id, value \
+                        FROM (SELECT id \
+                                FROM country \
+                                ORDER BY RANDOM() \
+                                LIMIT 5) AS random_countries \
+                        JOIN (SELECT country_id, value, date_of_info \
+                                FROM Area \
+                                ORDER BY date_of_info DESC) AS areas \
+                            ON random_countries.id = areas.country_id \
+                        GROUP BY country_id, value, date_of_info \
+                        ORDER BY RANDOM();")
+
+    data = cursor.fetchall()
+    cursor.close()
+
+    return jsonify(data)
+
+# POST api/game {username: str, score: int}
 # endpoint to store game result of a user
-@app.route("/api/game-result", methods=["POST"])
+@app.route("/api/game", methods=["POST"])
 def create_game():
     data = request.get_json()
     username = data["username"]
