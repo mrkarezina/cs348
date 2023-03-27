@@ -137,7 +137,7 @@ def get_user():
 def get_game():
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT country_id, value \
+    cursor.execute("SELECT country_id, value \
                         FROM (SELECT id \
                                 FROM country \
                                 ORDER BY RANDOM() \
@@ -145,7 +145,7 @@ def get_game():
                         JOIN (SELECT country_id, value, date_of_info \
                                 FROM Area \
                                 ORDER BY date_of_info DESC) AS areas \
-                            ON random_countries.id = areas.country_id \
+                        ON random_countries.id = areas.country_id \
                         GROUP BY country_id, value, date_of_info \
                         ORDER BY RANDOM();")
 
