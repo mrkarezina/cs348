@@ -20,7 +20,7 @@ export default function SignUp({ setUsername }: { setUsername: (username: string
         // make api call
         createNewUser(user_signup_info)
             .then(() => {
-                showNotification({ title: `Logged in as ${user_signup_info.username}`, message: '' });
+                showNotification({ title: `Signed up and logged in as ${user_signup_info.username}`, message: '' });
                 setUsername(user_signup_info.username);
             }
             )
