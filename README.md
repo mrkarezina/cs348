@@ -12,9 +12,9 @@ A world stats interface that allows you to learn about different countries and p
 5. User profile with scoring history - implemented
 6. Score leaderboard - endpoints implemented
 
-# How to run the application
+## How to run the application
 
-## Build all images and start containers:
+### Build all images and start containers:
 ```
 docker-compose up
 ```
