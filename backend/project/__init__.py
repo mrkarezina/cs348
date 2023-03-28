@@ -64,6 +64,7 @@ def country_overview():
 
     cursor.close()
     resp = make_response({country_id: data})
+    resp.headers['Access-Control-Allow-Origin'] = '*'
     
     return resp
 
@@ -89,10 +90,28 @@ def create_user():
 
     
     cursor.close()
+    
+    return jsonify({"message": "User created successfully."})
 
-    resp = make_response({"message": "User created successfully."})
+# POST api/login-user {username: str, password: str}
+# endpoint to login as user. If user exists and password is correct, return true, otherwise false
+@app.route("/api/login-user", methods=["POST"])
+def login_user():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
 
-    return resp
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM users WHERE username = '%s' AND password = '%s');" % (username, password))
+    data = str(cursor.fetchone()[0])
+    cursor.close()
+
+    if data == 'False':
+        return jsonify({"error": "Incorrect credentials."})
+    else:
+        return jsonify({"message": "Correct credentials."})
+    
 
 # POST api/login-user {username: str, password: str}
 # endpoint to login as user. If user exists and password is correct, return true, otherwise false
@@ -185,9 +204,7 @@ def get_leaderboard():
     data = cursor.fetchall()
     cursor.close()
 
-    resp = make_response(data)
-
-    return resp
+    return jsonify(data)
 
 @app.after_request
 def after_request_func(response):
