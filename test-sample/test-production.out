@@ -1,0 +1,88 @@
+               List of relations
+ Schema |         Name          | Type  | Owner
+--------+-----------------------+-------+-------
+ public | area                  | table | user
+ public | country               | table | user
+ public | education_expenditure | table | user
+ public | games                 | table | user
+ public | gini_index            | table | user
+ public | population            | table | user
+ public | real_gdp              | table | user
+ public | region                | table | user
+ public | unemployment_rate     | table | user
+ public | users                 | table | user
+(10 rows)
+
+ country_id |  value
+------------+----------
+ RUS        | 17098242
+ ATA        | 14200000
+ CAN        |  9984670
+ USA        |  9833517
+ CHN        |  9596960
+ BRA        |  8515770
+ AUS        |  7741220
+ IND        |  3287263
+ ARG        |  2780400
+ KAZ        |  2724900
+(10 rows)
+
+  value
+---------
+ 9984670
+(1 row)
+
+  value
+----------
+ 38232593
+(1 row)
+
+  value
+---------
+ 9984670
+(1 row)
+
+ value
+-------
+  33.3
+(1 row)
+
+ value
+-------
+   5.2
+(1 row)
+
+INSERT 0 1
+
+               user_id                | username |      password
+--------------------------------------+----------+--------------------
+ faf6e265-0bb0-4f18-be63-260e704e8302 | fdafda   | fdafdafdsafdasfasf
+ 7207b9e3-85cf-4694-9b8a-ecba597a4345 | rachell  | password1234
+ 7207b9e3-85cf-4694-9b8a-ecba576a4345 | rachelli | password1234
+(3 rows)
+
+ exists
+--------
+ t
+(1 row)
+
+ country_id | value
+------------+--------
+ MWI        | 118484
+ RWA        |  26338
+ MLT        |    316
+ IMN        |    572
+ BHS        |  13880
+(5 rows)
+
+INSERT 0 1
+
+ score
+-------
+   100
+(1 row)
+
+ username | score
+----------+-------
+ rachell  |   100
+(1 row)
