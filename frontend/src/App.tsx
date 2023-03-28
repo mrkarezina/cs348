@@ -11,12 +11,13 @@ import { Container, Drawer, Button, Group, Flex, Center, Space } from '@mantine/
 import { useDisclosure } from '@mantine/hooks';
 import { TextInput } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
-import LoginSignUp from './Login';
+import Login from './Login';
 import UserProfile from './UserProfile';
 import Game from './Game';
 import { useCookie } from './utils';
 import { Avatar, ActionIcon, Box } from '@mantine/core';
 import { IconStar } from '@tabler/icons-react';
+import SignUp from './SignUp';
 
 export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
@@ -51,19 +52,22 @@ export default function App() {
           <Container size='xl'>
             {username == null ? 
               <Flex justify="space-around">
-                <Button onClick={() => setDrawerTitle('Login / Sign up')}>Sign Up</Button>
+                <Button onClick={() => setDrawerTitle('Sign Up')}>Sign Up</Button>
                 <Space w="sm" />
-                <Button onClick={() => setDrawerTitle('Login / Sign up')}>Login</Button>
+                <Button onClick={() => setDrawerTitle('Login')}>Login</Button>
               </Flex> :
               <ActionIcon><Avatar onClick={() => setDrawerTitle(`${username}'s Profile`)} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
           </Container>
           <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
             <Box maw={300} mx='auto'>
-              {drawerTitle === 'Login / Sign up' && <LoginSignUp setUsername={username => {
+              {drawerTitle === 'Sign Up' && <SignUp setUsername={username => {
                 setUsername(username);
                 setDrawerTitle(`${username}'s Profile`);
               }} />}
-
+              {drawerTitle === 'Login' && <Login setUsername={username => {
+                setUsername(username);
+                setDrawerTitle(`${username}'s Profile`);
+              }} />}
               {username != null && drawerTitle === `${username}'s Profile` && <UserProfile username={username} logout={() => {
                 setUsername(null);
                 setDrawerTitle(null);

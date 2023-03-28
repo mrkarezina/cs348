@@ -4,7 +4,7 @@ import { useForm } from '@mantine/form';
 import { Message, UserSignUpInfo, createNewUser } from './apiCalls';
 import { showNotification } from '@mantine/notifications';
 
-export default function LoginSignUp({ setUsername }: { setUsername: (username: string) => void }) {
+export default function SignUp({ setUsername }: { setUsername: (username: string) => void }) {
     const form = useForm({
         initialValues: {
             username: '',
@@ -35,7 +35,7 @@ export default function LoginSignUp({ setUsername }: { setUsername: (username: s
             <TextInput withAsterisk label='Your username' placeholder='Your username' icon={<IconUser size='0.8rem' />} {...form.getInputProps('username')} />
             <PasswordInput label='Your password' placeholder='Your password' minLength={7} {...form.getInputProps('password')} />
             <Group position="right" mt="md">
-                <Button type="submit">Submit</Button>
+                <Button type="submit">Sign Up</Button>
             </Group>
         </form>
     </>;
