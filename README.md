@@ -12,7 +12,7 @@ A world stats interface that allows you to learn about different countries and p
 5. User profile with scoring history - implemented
 6. Score leaderboard - endpoints implemented
 
-## How to run the application
+## Running the application
 
 ### Build all images and start containers:
 ```
@@ -32,8 +32,6 @@ docker-compose exec web python manage.py populate_db
 
 Database Information
 - [PostgreSQL](https://www.postgresql.org/download/)
-
-## You can now try the application!
 
 Once the container has been build and the database populate navigate to `http://localhost:5001/` to interact with the web app.
 
