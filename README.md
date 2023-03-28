@@ -32,6 +32,7 @@ docker-compose exec web python manage.py populate_db
 
 Database Information
 - [PostgreSQL](https://www.postgresql.org/download/)
+- View sample queries and outputs [here](https://github.com/mrkarezina/cs348/tree/main/test-sample)
 
 Once the container has been build and the database populate navigate to `http://localhost:5001/` to interact with the web app.
 
