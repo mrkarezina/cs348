@@ -113,26 +113,6 @@ def login_user():
         return jsonify({"message": "Correct credentials."})
     
 
-# POST api/login-user {username: str, password: str}
-# endpoint to login as user. If user exists and password is correct, return true, otherwise false
-@app.route("/api/login-user", methods=["POST"])
-def login_user():
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-
-    cursor = connection.cursor()
-
-    cursor.execute("SELECT EXISTS (SELECT 1 FROM users WHERE username = '%s' AND password = '%s');" % (username, password))
-    data = str(cursor.fetchone()[0])
-    cursor.close()
-
-    if data == 'False':
-        return jsonify({"error": "Incorrect credentials."})
-    else:
-        return jsonify({"message": "Correct credentials."})
-    
-
 # GET api/get-user?username={str}
 # endpoint returns array of scores corresponding to games user played
 @app.route("/api/get-user")
