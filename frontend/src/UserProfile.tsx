@@ -1,4 +1,4 @@
-import { TextInput, Button, Container, Avatar, Flex, Space, Table } from '@mantine/core';
+import { TextInput, Button, Container, Avatar, Flex, Space, Table, Text, Divider } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { UserInfo, getUserInfo } from './apiCalls';
 
@@ -18,18 +18,25 @@ export default function UserProfile({ username, logout }: { username: string, lo
             </tr>
         )
     });
+
     
     return (
         <Flex direction="column" justify="flex_end">
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Game</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>{scores}</tbody>
-            </Table>
+            {scores?.length ?
+                <>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Game</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>{scores}</tbody>
+                    </Table>
+                    <Divider my="sm" />
+                </>
+            : <></>}
+            <Text>Number of games played: {scores?.length}</Text> 
             <Space h="xl" />
             <Button onClick={logout}>Logout</Button>
         </Flex>
