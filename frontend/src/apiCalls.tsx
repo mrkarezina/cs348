@@ -1,7 +1,7 @@
 import { countriesMap } from './Countries';
 
 const BASE_API_URL = 'http://localhost:5001/api';
-const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country-overview?country_id=`;
+const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country_stats?country_id=`;
 const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
 const USER_LOGIN_URL = `${BASE_API_URL}/login-user`;
 const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;

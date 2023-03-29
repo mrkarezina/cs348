@@ -20,29 +20,35 @@ connection.autocommit = True
 def index():
    return app.send_static_file('index.html')
 
+
 # GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}
 # list of top/bottom n countries for x stat
 # order_by must be one of ASC or DESC
 @app.route("/api/country_rankings_by_stat")
-def countries_stats():
-    # TODO: error checking
+def country_rankings_by_stat():
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit", default=10)
     order_by = request.args.get("order_by", default="DESC")
     
     cursor = connection.cursor()
-    cursor.execute("SELECT country_id, value \
-                     FROM %s \
-                     ORDER BY value %s \
-                     LIMIT %s;" % (stat_name, order_by, limit))
-    data = cursor.fetchall()
+    try:
+        cursor.execute(f"SELECT country_id, value \
+                     FROM {stat_name} \
+                     ORDER BY value {order_by} \
+                     LIMIT {limit};")
+        response = (jsonify(cursor.fetchall()), 201)
+    except psycopg2.Error as e:
+        if connection: connection.rollback()
+        error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
+        response = (error, 400)
+        
     cursor.close()
-    
-    return jsonify(data)
+    return response
 
-# GET api/country-overview?country_id={str}
+
+# GET api/country_stats?country_id={str}
 # Endpoint that return all of the stats associated with a country 
-@app.route("/api/country-overview")
+@app.route("/api/country_stats")
 def country_overview():
     country_id = request.args.get("country_id")
     stats_list = []

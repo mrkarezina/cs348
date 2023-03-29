@@ -3,7 +3,7 @@
 -- GET /api/country_rankings_by_stat
 SELECT country_id, value FROM area ORDER BY value desc LIMIT 10;
 
--- GET /api/country-overview
+-- GET /api/country_stats
 select value from population where country_id='CAN';
 select value from area where country_id='CAN';
 select value from gini_index where country_id='CAN';
