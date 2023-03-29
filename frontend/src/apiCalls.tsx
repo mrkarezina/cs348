@@ -5,6 +5,7 @@ const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country-overview?country_id=`;
 const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
 const USER_LOGIN_URL = `${BASE_API_URL}/login-user`;
 const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;
+const LEADERBOARD_URL = `${BASE_API_URL}/get-leaderboard`;
 
 export interface CountryStats {
     code: string;
@@ -34,7 +35,7 @@ export const fetchCountryInfo = async ({ code }: { code: string }): Promise<Coun
     const info = await fetch(`${COUNTRY_OVERVIEW_URL}${code}`).then(res => res.json()).then(data => data);
     return {
         code,
-        name: countriesMap[code.toLowerCase()],
+        name: countriesMap[code?.toLowerCase()],
         population: info[`${code}`].population,
         area: info[`${code}`].area,
         giniIndex: info[`${code}`].gini_index,
@@ -73,5 +74,9 @@ export const LoginUser = async (user_signup_info: UserSignUpInfo): Promise<Messa
 export const getUserInfo = async (username: string): Promise<UserInfo> => {
     return await fetch(`${USER_INFO_URL}${username}`).then(res => res.json()).then(data => data);
 }
+
+export const getLeaderboard = async (): Promise<[string, number][]> => {
+    return await fetch(LEADERBOARD_URL).then(res => res.json()).then(data => data);
+} 
 
 

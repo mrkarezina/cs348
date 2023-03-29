@@ -3,11 +3,11 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown } from 'semantic-ui-react';
-import { CountryStats, UserInfo, fetchCountryInfo } from './apiCalls';
+import { CountryStats, UserInfo, fetchCountryInfo, getLeaderboard } from './apiCalls';
 import MapChart from './MapChart';
 import { ThemeProvider } from './ThemeProvider';
 import { countryOptions } from './Countries';
-import { Container, Drawer, Button, Group, Flex, Center, Space } from '@mantine/core';
+import { Container, Drawer, Button, Group, Flex, Center, Space, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TextInput } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
@@ -18,6 +18,7 @@ import { useCookie } from './utils';
 import { Avatar, ActionIcon, Box } from '@mantine/core';
 import { IconStar } from '@tabler/icons-react';
 import SignUp from './SignUp';
+import Leaderboard from './Leaderboard';
 
 export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
@@ -27,12 +28,17 @@ export default function App() {
 
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerTitle, setDrawerTitle] = useState<string | null>(null);
+  const [leftDrawerTitle, setLeftDrawerTitle] = useState<string | null>(null);
 
   return <>
     <ThemeProvider>
 
       {/* top bar */}
       <Flex justify={"flex-end"} style={{ marginTop: 8 }}>
+          <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle("Leaderboard")) }}>Leaderboard</Button>
+          <Drawer title={leftDrawerTitle} position='left' opened={!!leftDrawerTitle} onClose={() => setLeftDrawerTitle(null)} >
+            <Leaderboard />
+          </Drawer>
           <Space w="md"  style={{ flex: 7.5 }}/>
           <Container>
             <Dropdown
@@ -58,7 +64,7 @@ export default function App() {
               </Flex> :
               <ActionIcon><Avatar onClick={() => setDrawerTitle(`${username}'s Profile`)} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
           </Container>
-          <Drawer size='md' position='right' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
+          <Modal size='sm' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
             <Box maw={300} mx='auto'>
               {drawerTitle === 'Sign Up' && <SignUp setUsername={username => {
                 setUsername(username);
@@ -75,7 +81,7 @@ export default function App() {
 
               {drawerTitle === 'Game' && <Game />}
             </Box>
-          </Drawer>
+          </Modal>
       </Flex>
 
 
