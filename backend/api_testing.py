@@ -7,6 +7,7 @@ import inspect
 base_url = "http://localhost:5001/"
 
 
+##### country_rankings_by_stat
 def test__country_rankings_by_stat__happy_path():
     stat_name = "Population"
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}"
@@ -65,6 +66,26 @@ def test__country_rankings_by_stat__error_check():
     assert response.status_code == 400
 
 
+##### country_stats
+def test__country_stats__happy_path():
+    country_id = "CHN"
+    get_data = f"api/country_stats?country_id={country_id}"
+    response = requests.get(base_url + get_data)
+    china_stats = {'CHN': {
+        'area': [9596960],
+        'education_expenditure': [3.6],
+        'gini_index': [38.2],
+        'population': [1410539758.0],
+        'real_gdp': [24861000000000.0],
+        'unemployment_rate': [4.82]
+        }}
+    assert response.status_code == 201
+    assert response.json() == china_stats
+
+
+def test__country_stats__error_check():
+    # this function shouldnt fail
+    pass
 
 
 

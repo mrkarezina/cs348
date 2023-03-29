@@ -38,7 +38,6 @@ def country_rankings_by_stat():
                      LIMIT {limit};")
         response = (jsonify(cursor.fetchall()), 201)
     except psycopg2.Error as e:
-        if connection: connection.rollback()
         error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
         response = (error, 400)
         
@@ -49,7 +48,7 @@ def country_rankings_by_stat():
 # GET api/country_stats?country_id={str}
 # Endpoint that return all of the stats associated with a country 
 @app.route("/api/country_stats")
-def country_overview():
+def country_stats():
     country_id = request.args.get("country_id")
     stats_list = []
     for filename in os.listdir("/usr/src/input_data/"):
@@ -57,23 +56,28 @@ def country_overview():
     data = {}
     
     cursor = connection.cursor()
-    for stat in stats_list:
-        cursor.execute("SELECT value \
-                        FROM %s \
-                        WHERE country_id = '%s';" % (stat, country_id))
-        country_value = cursor.fetchone()
-        data[stat] = country_value
+
+    try:
+        for stat in stats_list:
+            cursor.execute(f"SELECT value \
+                            FROM {stat} \
+                            WHERE country_id = '{country_id}';")
+            data[stat] = cursor.fetchone()
+            resp = make_response({country_id: data})
+            resp.headers['Access-Control-Allow-Origin'] = '*'
+            response = (resp, 201)
+    except psycopg2.Error as e:
+        error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
+        response = (error, 400)
 
     cursor.close()
-    resp = make_response({country_id: data})
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    
-    return resp
+    return response
 
-    
-# POST api/create-user {username: str, password: str}
+# TODO: refactor all code below
+
+# POST api/create_user {username: str, password: str}
 # endpoint to create user storing their username and password
-@app.route("/api/create-user", methods=["POST"])
+@app.route("/api/create_user", methods=["POST"])
 def create_user():
     data = request.get_json()
     username = data["username"]
@@ -83,21 +87,22 @@ def create_user():
     cursor = connection.cursor()
 
     try:
-        cursor.execute("INSERT INTO users (user_id, username, password) \
-                        VALUES ('%s', '%s', '%s');" % (user_uuid, username, password))
+        cursor.execute(f"INSERT INTO users (user_id, username, password) \
+                        VALUES ('{user_uuid}', '{username}', '{password}');")
     except UniqueViolation:
-        return jsonify({"error": f"{username} already exists, please use a different username."})
+        if connection: connection.rollback()
+        return jsonify({"error": f"{username} already exists, please use a different username."}), 400
     except CheckViolation:
-        return jsonify({"error": "Please ensure that your password is greater than 7 characters."})
-
+        if connection: connection.rollback()
+        return jsonify({"error": "Please ensure that your password is greater than 7 characters."}), 400
     
     cursor.close()
-    
-    return jsonify({"message": "User created successfully."})
+    return jsonify({"message": "User created successfully."}), 201
 
-# POST api/login-user {username: str, password: str}
+
+# POST api/login_user {username: str, password: str}
 # endpoint to login as user. If user exists and password is correct, return true, otherwise false
-@app.route("/api/login-user", methods=["POST"])
+@app.route("/api/login_user", methods=["POST"])
 def login_user():
     data = request.get_json()
     username = data["username"]
@@ -105,28 +110,29 @@ def login_user():
 
     cursor = connection.cursor()
 
-    cursor.execute("SELECT EXISTS (SELECT 1 FROM users WHERE username = '%s' AND password = '%s');" % (username, password))
+    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM users WHERE username = '{username}' AND password = '{password}');")
     data = str(cursor.fetchone()[0])
     cursor.close()
 
+    # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 201
     if data == 'False':
-        return jsonify({"error": "Incorrect credentials."})
+        return jsonify({"error": "Incorrect credentials."}), 201
     else:
-        return jsonify({"message": "Correct credentials."})
+        return jsonify({"message": "Correct credentials."}), 201
     
 
-# GET api/get-user?username={str}
+# GET api/get_user?username={str}
 # endpoint returns array of scores corresponding to games user played
-@app.route("/api/get-user")
+@app.route("/api/get_user")
 def get_user():
     username = request.args.get("username")
     
     cursor = connection.cursor()
-    cursor.execute("SELECT score \
+    cursor.execute(f"SELECT score \
                     FROM games \
                     WHERE user_id = (SELECT user_id \
                                     FROM users \
-                                    WHERE username = '%s');" % username) 
+                                    WHERE username = '{username}');") 
     data = cursor.fetchall()
     data = [score[0] for score in data]
     cursor.close()
@@ -166,16 +172,16 @@ def create_game():
     score = data["score"]
 
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO games (user_id, score) \
+    cursor.execute(f"INSERT INTO games (user_id, score) \
                     VALUES ((SELECT user_id \
                             FROM users \
-                            WHERE username = '%s'), %s);" % (username, score)) 
+                            WHERE username = '{username}'), {score});") 
     cursor.close()
     return jsonify({"message": "Game created successfully."})
 
-# GET api/get-leaderboard
+# GET api/get_leaderboard
 # endpoint returns top 10 scores
-@app.route("/api/get-leaderboard")
+@app.route("/api/get_leaderboard")
 def get_leaderboard():
     cursor = connection.cursor()
     cursor.execute("SELECT username, score \
