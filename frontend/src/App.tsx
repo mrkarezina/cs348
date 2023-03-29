@@ -35,7 +35,11 @@ export default function App() {
 
       {/* top bar */}
       <Flex justify={"flex-end"} style={{ marginTop: 8 }}>
-          <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle("Leaderboard")) }}>Leaderboard</Button>
+          <Flex justify="space-around">
+            <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle("Leaderboard")) }}>Leaderboard</Button>
+            <Space w="sm" />
+            <Button onClick={() => { }}>Country</Button>
+          </Flex>
           <Drawer title={leftDrawerTitle} position='left' opened={!!leftDrawerTitle} onClose={() => setLeftDrawerTitle(null)} >
             <Leaderboard />
           </Drawer>
