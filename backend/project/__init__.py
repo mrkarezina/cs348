@@ -20,19 +20,15 @@ connection.autocommit = True
 def index():
    return app.send_static_file('index.html')
 
-# GET api/get-countries?stat_name={str}&limit={uint}&order_by={str}
-# list of top n/bottom n countries for x stat
-@app.route("/api/get-countries")
+# GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}
+# list of top/bottom n countries for x stat
+# order_by must be one of ASC or DESC
+@app.route("/api/country_rankings_by_stat")
 def countries_stats():
     # TODO: error checking
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit", default=10)
-    order_by = request.args.get("order_by", default="top")
-    
-    if order_by == "top":
-        order_by = "DESC"
-    elif order_by == "bottom":
-        order_by = "ASC"
+    order_by = request.args.get("order_by", default="DESC")
     
     cursor = connection.cursor()
     cursor.execute("SELECT country_id, value \
