@@ -1,6 +1,6 @@
 -- First display all tables by running "\dt"
 
--- GET /api/get-countries
+-- GET /api/country_rankings_by_stat
 SELECT country_id, value FROM area ORDER BY value desc LIMIT 10;
 
 -- GET /api/country-overview
