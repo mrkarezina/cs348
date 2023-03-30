@@ -1,13 +1,13 @@
 -- First display all tables by running "\dt"
 
 -- GET /api/country_rankings_by_stat
-SELECT country_id, value FROM area ORDER BY value desc LIMIT 10;
+SELECT country_id, value FROM area ORDER BY value DESC LIMIT 10;
 
 -- GET /api/country_stats
-select value from population where country_id='CAN';
-select value from area where country_id='CAN';
-select value from gini_index where country_id='CAN';
-select value from education_expenditure where country_id='CAN';
+SELECT value FROM population WHERE country_id='CAN';
+SELECT value FROM area WHERE country_id='CAN';
+SELECT value FROM gini_index WHERE country_id='CAN';
+SELECT value FROM education_expenditure WHERE country_id='CAN';
 
 -- POST /api/create_user
 INSERT INTO users (user_id, username, password) values ('7207b9e3-85cf-4694-9b8a-ecba576a4345', 'rachelli', 'password1234');
