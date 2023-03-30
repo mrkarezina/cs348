@@ -7,7 +7,7 @@ import { CountryStats, UserInfo, fetchCountryInfo, getLeaderboard } from './apiC
 import MapChart from './MapChart';
 import { ThemeProvider } from './ThemeProvider';
 import { countryOptions } from './Countries';
-import { Container, Drawer, Button, Group, Flex, Center, Space, Modal } from '@mantine/core';
+import { Container, Drawer, Button, Group, Flex, Center, Space, Modal, Slider, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TextInput } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
@@ -20,9 +20,19 @@ import { IconStar } from '@tabler/icons-react';
 import SignUp from './SignUp';
 import Leaderboard from './Leaderboard';
 
+const stats = [
+  {key: 'area', value: 'area', text: 'Area'},
+  {key: 'education_expenditure', value: 'education_expenditure', text: 'Education expenditure'},
+  {key: 'gini_index', value: 'gini_index', text: 'Gini index'},
+  {key: 'population', value: 'population', text: 'Population'},
+  {key: 'real_gdp', value: 'real_gdp', text: 'GDP'},
+  {key: 'unemployment_rate', value: 'unemployment_rate', text: 'Unemployment rate'},
+]
+
 export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
+  const [rankingStat, setRankingStat] = useState<string | null>(null);
 
   const [username, setUsername] = useCookie('username', null);
 
@@ -38,10 +48,38 @@ export default function App() {
           <Flex justify="space-around">
             <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle("Leaderboard")) }}>Leaderboard</Button>
             <Space w="sm" />
-            <Button onClick={() => { }}>Country</Button>
+            <Button onClick={() => { setLeftDrawerTitle("Country Rankings") }}>Country</Button>
           </Flex>
           <Drawer title={leftDrawerTitle} position='left' opened={!!leftDrawerTitle} onClose={() => setLeftDrawerTitle(null)} >
-            <Leaderboard />
+            {leftDrawerTitle == "Leaderboard" && <Leaderboard />}
+            {leftDrawerTitle == "Country Rankings" && <>
+              <Flex direction={"column"}>
+                <Dropdown
+                  placeholder='Area'
+                  style={{ width: 20 }}
+                  selection
+                  onChange={async (event, data) => {
+                    setRankingStat(data.name);
+                  }}
+                  text={rankingStat!}
+                  options={stats}
+                />
+                <Space h="lg" />
+                <Text>Number of Countries</Text>
+                <Space h="sm" />
+                <Slider
+                  marks={[
+                    { value: 0, label: '' },
+                    { value: 10, label: '10' },
+                    { value: 20, label: '20' },
+                    { value: 30, label: '30' },
+                    { value: 40, label: '40' },
+                    { value: 50, label: '' },
+                  ]}
+                  max={50}
+                />
+              </Flex>
+            </>}
           </Drawer>
           <Space w="md"  style={{ flex: 7.5 }}/>
           <Container>

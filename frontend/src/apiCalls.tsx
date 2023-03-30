@@ -6,6 +6,7 @@ const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
 const USER_LOGIN_URL = `${BASE_API_URL}/login-user`;
 const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;
 const LEADERBOARD_URL = `${BASE_API_URL}/get-leaderboard`;
+const GET_COUNTRIES_RANKING = `${BASE_API_URL}/get-countries`;
 
 export interface CountryStats {
     code: string;
@@ -29,6 +30,12 @@ export interface Message {
 
 export interface UserInfo {
     scores: string[];
+}
+
+export interface FilterRankingInfo {
+    statName: string;
+    n?: number;
+    order?: string;
 }
 
 export const fetchCountryInfo = async ({ code }: { code: string }): Promise<CountryStats> => {
@@ -77,6 +84,10 @@ export const getUserInfo = async (username: string): Promise<UserInfo> => {
 
 export const getLeaderboard = async (): Promise<[string, number][]> => {
     return await fetch(LEADERBOARD_URL).then(res => res.json()).then(data => data);
-} 
+}
+
+// export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<> => {
+//     //TODO
+// }
 
 
