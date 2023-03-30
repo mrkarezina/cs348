@@ -6,6 +6,7 @@ from project import app, connection
 cli = FlaskGroup(app)
 
 
+# TODO: rename to create_tables, create separate function for dropping tables
 @cli.command("create_db")
 def create_db():
     cursor = connection.cursor()
@@ -18,17 +19,19 @@ def create_db():
     connection.commit()
     print("Database created successfully")
 
-# TODO: rewrite function to work on all files in /usr/src/app/data once population is fixed, esp region and country tables
+
+
 @cli.command("populate_db")
 def populate_db():
-
-    cursor = connection.cursor()
+    # csv paths in psql container
+    psql_fixed_data = "/var/lib/world_factbook/fixed_data/"
+    psql_input_data = "/var/lib/world_factbook/input_data/"
+    # csv path in web container
+    web_input_data = "/usr/src/input_data/"
 
     print("Populating table...")
 
-    psql_fixed_data = "/var/lib/world_factbook/fixed_data/"
-    psql_input_data = "/var/lib/world_factbook/input_data/"
-    web_input_data = "/usr/src/input_data/"
+    cursor = connection.cursor()
 
     # populate Region and Country tables
     cursor.execute(
@@ -47,6 +50,42 @@ def populate_db():
 
     connection.commit()
     print("Database populated successfully")
+
+
+
+@cli.command("create_recent_tables")
+def create_recent_tables():
+    web_input_data = "/usr/src/input_data/"
+
+    cursor = connection.cursor()
+    
+    for filename in os.listdir(web_input_data):
+        table_name=filename[:-4]
+        # delete country recent statistic table if exists
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name}_recent;")
+        # create country recent statistic table
+        cursor.execute(f"CREATE TABLE {table_name}_recent (LIKE {table_name} INCLUDING ALL);")
+
+    connection.commit()
+
+
+
+@cli.command("populate_recent_tables")
+def populate_recent_tables():
+    web_input_data = "/usr/src/input_data/"
+
+    cursor = connection.cursor()
+    
+    for filename in os.listdir(web_input_data):
+        cursor.execute(
+            open("utilities/populate_recent_stat_table.sql", "r").read().format(
+                    table_name=filename[:-4]
+                )
+        )
+        
+    connection.commit()
+
+
 
 
 # TODO: create makefile script to automatically invoke create_db and populate_db

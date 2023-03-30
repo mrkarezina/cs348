@@ -12,7 +12,7 @@ CREATE TABLE Country(
     region_id INTEGER,
     PRIMARY KEY (id),
     FOREIGN KEY (region_id) REFERENCES Region
-        ON DELETE SET NULL 
+        ON DELETE SET NULL
 );
 
 -- Table for statistic: Area
