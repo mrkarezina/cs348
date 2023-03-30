@@ -1,3 +1,4 @@
+Display all tables by running "\dt":
                List of relations
  Schema |         Name          | Type  | Owner
 --------+-----------------------+-------+-------
@@ -13,6 +14,7 @@
  public | users                 | table | user
 (10 rows)
 
+GET /api/country_rankings_by_stat:
  country_id |  value
 ------------+----------
  RUS        | 17098242
@@ -27,6 +29,7 @@
  KAZ        |  2724900
 (10 rows)
 
+GET /api/country_stats:
   value
 ---------
  9984670
@@ -52,8 +55,7 @@
    5.2
 (1 row)
 
-INSERT 0 1
-
+POST /api/create_user:
                user_id                | username |      password
 --------------------------------------+----------+--------------------
  faf6e265-0bb0-4f18-be63-260e704e8302 | fdafda   | fdafdafdsafdasfasf
@@ -61,11 +63,13 @@ INSERT 0 1
  7207b9e3-85cf-4694-9b8a-ecba576a4345 | rachelli | password1234
 (3 rows)
 
+POST /api/login_user:
  exists
 --------
  t
 (1 row)
 
+GET /api/game:
  country_id | value
 ------------+--------
  MWI        | 118484
@@ -75,13 +79,13 @@ INSERT 0 1
  BHS        |  13880
 (5 rows)
 
-INSERT 0 1
-
+POST /api/game, followed by, GET /api/get_user:
  score
 -------
    100
 (1 row)
 
+GET /api/get_leaderboard:
  username | score
 ----------+-------
  rachell  |   100
