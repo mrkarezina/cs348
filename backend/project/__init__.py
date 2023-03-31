@@ -72,6 +72,8 @@ def country_stats():
     cursor.close()
     return response
 
+# TODO: refactor all code below
+
 # POST api/create_user {username: str, password: str}
 # endpoint to create user storing their username and password
 @app.route("/api/create_user", methods=["POST"])
