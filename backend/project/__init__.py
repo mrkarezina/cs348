@@ -87,7 +87,7 @@ def create_user():
 
     try:
         cursor.execute(f"INSERT INTO users (user_id, username, password) \
-                        VALUES ('{user_uuid}', '{username}', '{password}');")
+                        VALUES ('{user_uuid}', '{username}', crypt('{password}', gen_salt('bf', 8)));")
     except UniqueViolation:
         if connection: connection.rollback()
         return jsonify({"error": f"{username} already exists, please use a different username."}), 400
@@ -109,7 +109,7 @@ def login_user():
 
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM users WHERE username = '{username}' AND password = '{password}');")
+    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM users WHERE username = '{username}' AND password = crypt('{password}', password));")
     data = str(cursor.fetchone()[0])
     cursor.close()
 

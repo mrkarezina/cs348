@@ -1,3 +1,5 @@
+CREATE EXTENSION pgcrypto;
+
 -- Table for Region
 CREATE TABLE Region(
     id SERIAL,
@@ -19,7 +21,7 @@ CREATE TABLE Country(
 CREATE TABLE Users(
     user_id UUID,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(20) NOT NULL,
+    password TEXT NOT NULL,
     PRIMARY KEY (user_id),
     CHECK (length(password) > 7)
 );
