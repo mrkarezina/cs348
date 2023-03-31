@@ -20,17 +20,24 @@ docker-compose up
 ```
 The first time the containers are built, the database is completely empty. The user would have to run the appropriate commands to populate the database
 
-### Create tables
+### Creating, populating and updating tables
+To see a list of make commands to assist with creating and populating tables, run:
 ```
-docker-compose exec web python manage.py create_db
-docker-compose exec web python manage.py create_recent_tables
+make
 ```
 
-### Load data from CSVs in raw_data
+
+The first time the program is run, to initialize the database with data run:
 ```
-docker-compose exec web python manage.py populate_db
-docker-compose exec web python manage.py populate_recent_tables
+make setup
 ```
+
+
+To update country data, add the new data into the tables in the raw_data folder and run:
+```
+make update
+```
+
 
 Database Information
 - [PostgreSQL](https://www.postgresql.org/download/)
