@@ -10,10 +10,8 @@ cli = FlaskGroup(app)
 def create_static_tables():
     cursor = connection.cursor()
     cursor.execute(open("utilities/drop_static_tables.sql", "r").read())
-    print("Creating database...")
     cursor.execute(open("utilities/static_schema.sql", "r").read())
     connection.commit()
-    print("Database created successfully")
 
 
 
