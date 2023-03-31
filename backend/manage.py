@@ -9,7 +9,7 @@ cli = FlaskGroup(app)
 @cli.command("create_static_tables")
 def create_static_tables():
     cursor = connection.cursor()
-    cursor.execute(open("utilities/drop_tables.sql", "r").read())
+    cursor.execute(open("utilities/drop_static_tables.sql", "r").read())
     print("Creating database...")
     cursor.execute(open("utilities/static_schema.sql", "r").read())
     connection.commit()
@@ -20,9 +20,11 @@ def create_static_tables():
 # TODO: create separate function for dropping tables
 @cli.command("create_stat_tables")
 def create_stat_tables():
+    web_input_data = "/usr/src/input_data/"
     cursor = connection.cursor()
-    # TODO: do we have/how can we implement error checking on this?
-    # TODO: DROP TABLES
+    for filename in os.listdir(web_input_data):
+        table_name=filename[:-4]
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
     print("Creating database...")
     cursor.execute(open("utilities/stats_schema.sql", "r").read())
     connection.commit()
@@ -82,8 +84,6 @@ def populate_recent_stat_tables():
                 )
         )
     connection.commit()
-
-
 
 
 # TODO: create makefile script to automatically invoke create_db and populate_db
