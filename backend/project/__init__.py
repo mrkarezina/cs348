@@ -64,14 +64,13 @@ def country_stats():
                             WHERE country_id = '{country_id}';")
             data[stat] = cursor.fetchone()
             resp = make_response({country_id: data})
+            response = (resp, 201)
     except psycopg2.Error as e:
         error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
         response = (error, 400)
 
     cursor.close()
-    return resp, 201
-
-# TODO: refactor all code below
+    return response
 
 # POST api/create_user {username: str, password: str}
 # endpoint to create user storing their username and password
