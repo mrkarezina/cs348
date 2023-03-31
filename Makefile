@@ -6,8 +6,8 @@ help: # Show help for each of the Makefile recipes.
 
 .PHONY: setup
 setup: # run all commands to initialize and populate the database
-	make create_all_tables
-	make populate_all_tables
+	make create-all-tables
+	make populate-all-tables
 
 .PHONY: create-all-tables
 create-all-tables: # creates all tables in the database
