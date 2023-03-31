@@ -22,14 +22,15 @@ The first time the containers are built, the database is completely empty. The u
 
 ### Create tables
 ```
-docker-compose exec web python manage.py create_db
-docker-compose exec web python manage.py create_recent_tables
+docker-compose exec web python manage.py create_static_tables
+docker-compose exec web python manage.py create_stat_tables
+docker-compose exec web python manage.py create_recent_stat_tables
 ```
 
 ### Load data from CSVs in raw_data
 ```
-docker-compose exec web python manage.py populate_db
-docker-compose exec web python manage.py populate_recent_tables
+docker-compose exec web python manage.py populate_stat_tables
+docker-compose exec web python manage.py populate_recent_stat_tables
 ```
 
 Database Information
