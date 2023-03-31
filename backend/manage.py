@@ -87,8 +87,5 @@ def populate_recent_stat_tables():
     connection.commit()
 
 
-# TODO: create makefile script to automatically invoke create_db and populate_db
-
-
 if __name__ == "__main__":
     cli()
