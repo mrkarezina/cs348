@@ -25,27 +25,31 @@ def create_stat_tables():
     for filename in os.listdir(web_input_data):
         table_name=filename[:-4]
         cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
-    print("Creating database...")
     cursor.execute(open("utilities/stats_schema.sql", "r").read())
     connection.commit()
-    print("Database created successfully")
+
+
+
+@cli.command("populate_static_tables")
+def populate_static_tables():
+    psql_fixed_data = "/var/lib/world_factbook/fixed_data/"
+    # populate Region and Country tables
+    cursor = connection.cursor()
+    cursor.execute(
+        open("utilities/populate_country_region.sql", "r").read(),
+        (psql_fixed_data+"countries.csv", psql_fixed_data+"iso.csv")
+    )
+    connection.commit()
 
 
 
 @cli.command("populate_stat_tables")
 def populate_stat_tables():
     # csv paths in psql container
-    psql_fixed_data = "/var/lib/world_factbook/fixed_data/"
     psql_input_data = "/var/lib/world_factbook/input_data/"
     # csv path in web container
     web_input_data = "/usr/src/input_data/"
-    print("Populating table...")
     cursor = connection.cursor()
-    # populate Region and Country tables
-    cursor.execute(
-        open("utilities/populate_country_region.sql", "r").read(),
-        (psql_fixed_data+"countries.csv", psql_fixed_data+"iso.csv")
-    )
     # populate country statistic tables
     for filename in os.listdir(web_input_data):
         cursor.execute(
@@ -55,7 +59,6 @@ def populate_stat_tables():
             )
         )
     connection.commit()
-    print("Database populated successfully")
 
 
 

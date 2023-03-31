@@ -29,6 +29,7 @@ docker-compose exec web python manage.py create_recent_stat_tables
 
 ### Load data from CSVs in raw_data
 ```
+docker-compose exec web python manage.py populate_static_tables
 docker-compose exec web python manage.py populate_stat_tables
 docker-compose exec web python manage.py populate_recent_stat_tables
 ```
