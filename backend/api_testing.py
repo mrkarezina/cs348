@@ -133,6 +133,26 @@ def test__create_user__error_check():
 
 
 
+##### login_user
+def test__login_user__happy_path():
+    create_user_url = "/api/create_user"
+    login_user_url = "/api/login_user"
+
+    post_data = {"username": "somethsiwdngs", "password": ""}
+    response = requests.post(base_url + create_user_url, json=post_data)
+    response = requests.post(base_url + login_user_url, json=post_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Correct credentials."}
+
+    post_data = {"username": "somethsiwdngs", "password": "asas"}
+    response = requests.post(base_url + login_user_url, json=post_data)
+    assert response.status_code == 200
+    assert response.json() == {"error": "Incorrect credentials."}
+
+
+def test__login_user__error_check():
+    pass
+
 
 
 

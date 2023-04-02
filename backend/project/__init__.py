@@ -111,22 +111,24 @@ def create_user():
 # endpoint to login as user. If user exists and password is correct, return true, otherwise false
 @app.route("/api/login_user", methods=["POST"])
 def login_user():
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-
+    username, password = request.get_json()["username"], request.get_json()["password"]
     cursor = connection.cursor()
-
-    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM users WHERE username = '{username}' AND password = crypt('{password}', password));")
-    data = str(cursor.fetchone()[0])
+    try:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+        cursor.execute(
+            f"SELECT EXISTS (SELECT 1 FROM users \
+            WHERE username = '{username}' AND password = crypt('{password}', password));"
+        )
+        result = cursor.fetchone()[0]
+        # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 200
+        message = {"message": "Correct credentials."} if result else {"error": "Incorrect credentials."}
+        response = (message, 200)
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = (error, 400)
     cursor.close()
+    return response
 
-    # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 200
-    if data == 'False':
-        return {"error": "Incorrect credentials."}, 200
-    else:
-        return {"message": "Correct credentials."}, 200
-    
 
 # GET api/get_user?username={str}
 # endpoint returns array of scores corresponding to games user played
@@ -145,6 +147,8 @@ def get_user():
     cursor.close()
 
     return {"scores": data}
+
+
 
 # GET api/game
 # endpoint returns list of 5 random country and area tuples
