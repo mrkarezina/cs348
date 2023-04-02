@@ -30,7 +30,6 @@ def country_rankings_by_stat():
     limit = request.args.get("limit", default=10)
     order_by = request.args.get("order_by", default="DESC")
     year = request.args.get("year")
-    
     cursor = connection.cursor()
     try:
         if year:
@@ -52,35 +51,37 @@ def country_rankings_by_stat():
     except psycopg2.Error as e:
         error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
         response = (error, 400)
-        
     cursor.close()
     return response
 
 
-# GET api/country_stats?country_id={str}
-# Endpoint that return all of the stats associated with a country 
+# GET api/country_stats?country_id={str}&year={uint}
+# Endpoint that return all of the stats associated with a country
 @app.route("/api/country_stats")
 def country_stats():
     country_id = request.args.get("country_id")
+    year = request.args.get("year")
     stats_list = []
     for filename in os.listdir("/usr/src/input_data/"):
         stats_list.append(filename[:-4])
     data = {}
-    
     cursor = connection.cursor()
-
     try:
         for stat in stats_list:
-            cursor.execute(f"SELECT value \
-                            FROM {stat} \
-                            WHERE country_id = '{country_id}';")
+            if year:
+                cursor.execute(f"SELECT value \
+                                FROM {stat} \
+                                WHERE date_of_info={year} AND country_id = '{country_id}';")
+            else:
+                cursor.execute(f"SELECT value \
+                                FROM {stat}_recent \
+                                WHERE country_id = '{country_id}';")
             data[stat] = cursor.fetchone()
             resp = make_response({country_id: data})
             response = (resp, 201)
     except psycopg2.Error as e:
         error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
         response = (error, 400)
-
     cursor.close()
     return response
 

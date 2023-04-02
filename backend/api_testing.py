@@ -94,6 +94,20 @@ def test__country_stats__happy_path():
     assert response.status_code == 201
     assert response.json() == china_stats
 
+    year = 9999
+    get_data = f"api/country_stats?country_id={country_id}&year={year}"
+    response = requests.get(base_url + get_data)
+    china_stats_empty = {'CHN': {
+        'area': None,
+        'education_expenditure': None,
+        'gini_index': None,
+        'population': None,
+        'real_gdp': None,
+        'unemployment_rate': None
+        }}
+    assert response.status_code == 201
+    assert response.json() == china_stats_empty
+
 
 def test__country_stats__error_check():
     # this function shouldnt fail
