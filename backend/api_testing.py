@@ -25,6 +25,18 @@ def test__country_rankings_by_stat__happy_path():
     assert response.status_code == 201
     assert response.json() == top10population
 
+    year=2022
+    get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&year={year}"
+    response = requests.get(base_url + get_data)
+    assert response.status_code == 201
+    assert response.json() == top10population
+
+    year=9999
+    get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&year={year}"
+    response = requests.get(base_url + get_data)
+    assert response.status_code == 201
+    assert response.json() == []
+
     stat_name = "Population"
     limit = 8
     order_by = "DESC"

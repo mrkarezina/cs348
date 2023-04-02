@@ -21,7 +21,7 @@ def index():
    return app.send_static_file('index.html')
 
 
-# GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}
+# GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}&year={uint}
 # list of top/bottom n countries for x stat
 # order_by must be one of ASC or DESC
 @app.route("/api/country_rankings_by_stat")
@@ -29,13 +29,25 @@ def country_rankings_by_stat():
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit", default=10)
     order_by = request.args.get("order_by", default="DESC")
+    year = request.args.get("year")
     
     cursor = connection.cursor()
     try:
-        cursor.execute(f"SELECT country_id, value \
-                     FROM {stat_name} \
-                     ORDER BY value {order_by} \
-                     LIMIT {limit};")
+        if year:
+            cursor.execute(
+                f"SELECT country_id, value \
+                FROM {stat_name} \
+                WHERE date_of_info={year} \
+                ORDER BY value {order_by} \
+                LIMIT {limit};"
+            )
+        else:
+            cursor.execute(
+                f"SELECT country_id, value \
+                FROM {stat_name}_recent \
+                ORDER BY value {order_by} \
+                LIMIT {limit};"
+            )
         response = (jsonify(cursor.fetchall()), 201)
     except psycopg2.Error as e:
         error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
