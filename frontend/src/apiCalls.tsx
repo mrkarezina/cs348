@@ -5,7 +5,8 @@ const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country-overview?country_id=`;
 const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
 const USER_LOGIN_URL = `${BASE_API_URL}/login-user`;
 const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;
-const LEADERBOARD_URL = `${BASE_API_URL}/get-leaderboard`;
+const LEADER_BOARD_URL = `${BASE_API_URL}/get-leaderboard`;
+const GAME_URL = `${BASE_API_URL}/game`;
 const GET_COUNTRIES_RANKING = `${BASE_API_URL}/get-countries`;
 
 export interface CountryStats {
@@ -52,35 +53,48 @@ export const fetchCountryInfo = async ({ code }: { code: string }): Promise<Coun
     };
 };
 
-
 export const createNewUser = async (user_signup_info: UserSignUpInfo): Promise<Message> => {
     const message = await fetch(USER_SIGN_UP_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user_signup_info)
     }).then(res => res.json());
 
     return message;
-}
+};
 
 export const loginUser = async (user_signup_info: UserSignUpInfo): Promise<Message> => {
     const message = await fetch(USER_LOGIN_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user_signup_info)
     }).then(res => res.json());
-
     return message;
-}
+};
 
 // get score for the logged in user
 export const getUserInfo = async (username: string): Promise<UserInfo> => {
     return await fetch(`${USER_INFO_URL}${username}`).then(res => res.json());
-}
+};
 
 export const getLeaderboard = async (): Promise<[string, number][]> => {
-    return await fetch(LEADERBOARD_URL).then(res => res.json());
-}
+    return await fetch(LEADER_BOARD_URL).then(res => res.json());
+};
+
+export const getGameQuestions = async (): Promise<Array<[string, number]>> => {
+    return await fetch(GAME_URL).then(res => res.json());
+};
+
+export const submitScore = async (username: string, score: number): Promise<Record<string, string>> => {
+    return await fetch(GAME_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username,
+            score
+        })
+    }).then(res => res.json());
+};
 
 // export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<> => {
 //     //TODO

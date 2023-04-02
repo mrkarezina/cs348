@@ -1,8 +1,8 @@
-import { Box, TextInput, PasswordInput, Button, Group } from '@mantine/core';
-import { IconUser } from '@tabler/icons-react';
+import { Button, Group, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { Message, UserSignUpInfo, createNewUser } from './apiCalls';
 import { showNotification } from '@mantine/notifications';
+import { IconUser } from '@tabler/icons-react';
+import { createNewUser, UserSignUpInfo } from './apiCalls';
 
 export default function SignUp({ setUsername }: { setUsername: (username: string) => void }) {
     const form = useForm({

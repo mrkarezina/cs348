@@ -1,24 +1,20 @@
+import { ActionIcon, Avatar, Button, Container, Drawer, Flex, Modal, Slider, Space, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown } from 'semantic-ui-react';
-import { CountryStats, UserInfo, fetchCountryInfo, getLeaderboard } from './apiCalls';
-import MapChart from './MapChart';
-import { ThemeProvider } from './ThemeProvider';
+import { CountryStats, fetchCountryInfo, getLeaderboard } from './apiCalls';
 import { countryOptions } from './Countries';
-import { Container, Drawer, Button, Group, Flex, Center, Space, Modal, Slider, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { TextInput } from '@mantine/core';
-import { IconAt } from '@tabler/icons-react';
-import Login from './Login';
-import UserProfile from './UserProfile';
 import Game from './Game';
-import { useCookie } from './utils';
-import { Avatar, ActionIcon, Box } from '@mantine/core';
-import { IconStar } from '@tabler/icons-react';
-import SignUp from './SignUp';
 import Leaderboard from './Leaderboard';
+import Login from './Login';
+import MapChart from './MapChart';
+import SignUp from './SignUp';
+import { ThemeProvider } from './ThemeProvider';
+import UserProfile from './UserProfile';
+import { useCookie } from './utils';
 
 const stats = [
   {key: 'area', value: 'area', text: 'Area'},
@@ -42,18 +38,20 @@ export default function App() {
 
   return <>
     <ThemeProvider>
-
       {/* top bar */}
-      <Flex justify={"flex-end"} style={{ marginTop: 8 }}>
-          <Flex justify="space-around">
-            <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle("Leaderboard")) }}>Leaderboard</Button>
-            <Space w="sm" />
-            <Button onClick={() => { setLeftDrawerTitle("Country Rankings") }}>Country</Button>
+      <Flex justify={'flex-end'} style={{ marginTop: 8 }}>
+          <Flex justify='space-around'>
+            <Space w='sm' />
+            <Button onClick={() => { getLeaderboard().then(info => setLeftDrawerTitle('Leaderboard')) }}>Leaderboard</Button>
+            <Space w='sm' />
+            <Button onClick={() => { setLeftDrawerTitle('Country Rankings') }}>Country</Button>
+            <Space w='sm' />
+            { username && <Button onClick={() => { setDrawerTitle('Game') }}>Start Game</Button> }
           </Flex>
           <Drawer title={leftDrawerTitle} position='left' opened={!!leftDrawerTitle} onClose={() => setLeftDrawerTitle(null)} >
-            {leftDrawerTitle == "Leaderboard" && <Leaderboard />}
-            {leftDrawerTitle == "Country Rankings" && <>
-              <Flex direction={"column"}>
+            {leftDrawerTitle == 'Leaderboard' && <Leaderboard />}
+            {leftDrawerTitle == 'Country Rankings' && <>
+              <Flex direction={'column'}>
                 <Dropdown
                   placeholder='Area'
                   style={{ width: 20 }}
@@ -64,9 +62,9 @@ export default function App() {
                   text={rankingStat!}
                   options={stats}
                 />
-                <Space h="lg" />
+                <Space h='lg' />
                 <Text>Number of Countries</Text>
-                <Space h="sm" />
+                <Space h='sm' />
                 <Slider
                   marks={[
                     { value: 0, label: '' },
@@ -81,7 +79,7 @@ export default function App() {
               </Flex>
             </>}
           </Drawer>
-          <Space w="md"  style={{ flex: 7.5 }}/>
+          <Space w='md' style={{ flex: 4 }}/>
           <Container>
             <Dropdown
               placeholder='Search country'
@@ -96,18 +94,17 @@ export default function App() {
               options={countryOptions}
             />
           </Container>
-          <Space w="md"  style={{ flex: 6 }}/>
+          <Space w='md'  style={{ flex: 6 }}/>
           <Container size='xl'>
-            {username == null ? 
-              <Flex justify="space-around">
+            {username == null ?
+              <Flex justify='space-around'>
                 <Button onClick={() => setDrawerTitle('Sign Up')}>Sign Up</Button>
-                <Space w="sm" />
+                <Space w='sm' />
                 <Button onClick={() => setDrawerTitle('Login')}>Login</Button>
               </Flex> :
               <ActionIcon><Avatar onClick={() => setDrawerTitle(`${username}'s Profile`)} src={null} alt={username} color='red'>{username[0]?.toLocaleUpperCase()}</Avatar></ActionIcon>}
           </Container>
-          <Modal size='sm' opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
-            <Box maw={300} mx='auto'>
+          <Modal size={500} opened={drawerTitle !== null} onClose={() => setDrawerTitle(null)} title={drawerTitle}>
               {drawerTitle === 'Sign Up' && <SignUp setUsername={username => {
                 setUsername(username);
                 setDrawerTitle(`${username}'s Profile`);
@@ -120,13 +117,9 @@ export default function App() {
                 setUsername(null);
                 setDrawerTitle(null);
               }} />}
-
-              {drawerTitle === 'Game' && <Game />}
-            </Box>
+              {drawerTitle === 'Game' && username !== null && <Game username={username} />}
           </Modal>
       </Flex>
-
-
 
       <MapChart
         setTooltipStats={setTooltipStats}

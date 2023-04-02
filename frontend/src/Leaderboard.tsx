@@ -1,11 +1,11 @@
-import { TextInput, Button, Container, Avatar, Flex, Space, Table, Text, Divider } from '@mantine/core';
-import { useState, useEffect } from 'react';
-import { UserInfo, getLeaderboard, getUserInfo } from './apiCalls';
+import { Flex, Table } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { getLeaderboard } from './apiCalls';
 
 export default function Leaderboard() {
     const [scoreRanking, setScoreRanking] = useState<[string, number][] | []>([]);
     useEffect(() => {
-        getLeaderboard().then(rankings => setScoreRanking(rankings));
+        getLeaderboard().then(rankings => setScoreRanking(rankings)).catch(console.error);
     }, []);
 
     const scores = scoreRanking?.map((user, idx, _) => {
@@ -18,7 +18,6 @@ export default function Leaderboard() {
         )
     });
 
-    
     return (
         <Flex direction="column" justify="flex_end">
             {scores?.length ?
