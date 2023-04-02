@@ -156,6 +156,8 @@ def user_scores():
     return response
 
 
+# TODO: fix up game related apis
+
 
 # GET api/game
 # endpoint returns list of 5 random country and area tuples
@@ -209,8 +211,8 @@ def get_leaderboard():
                     LIMIT 10;") 
     data = cursor.fetchall()
     cursor.close()
-
     return data
+
 
 @app.after_request
 def after_request_func(response):
