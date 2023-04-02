@@ -1,7 +1,7 @@
 import { Box, TextInput, PasswordInput, Button, Group } from '@mantine/core';
 import { IconUser } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { Message, UserSignUpInfo, createNewUser } from './apiCalls';
+import { Message, UserSignUpInfo, createNewUser, loginUser } from './apiCalls';
 import { showNotification } from '@mantine/notifications';
 
 export default function Login({ setUsername }: { setUsername: (username: string) => void }) {
@@ -18,15 +18,15 @@ export default function Login({ setUsername }: { setUsername: (username: string)
 
     const submitLoginSignUp = (user_signup_info: UserSignUpInfo) => {
         // make api call
-        createNewUser(user_signup_info)
-            .then(() => {
+        loginUser(user_signup_info)
+            .then(message => {
+                if ('error' in message) throw message.error;
                 showNotification({ title: `Logged in as ${user_signup_info.username}`, message: '' });
                 setUsername(user_signup_info.username);
-            }
-            )
+            })
             .catch(err => {
                 console.error(err);
-                showNotification({ title: 'ERROR: Could not login or signup', message: err, color: 'red' });
+                showNotification({ title: 'ERROR: Could not login', message: err, color: 'red' });
             });
     }
 
@@ -40,4 +40,3 @@ export default function Login({ setUsername }: { setUsername: (username: string)
         </form>
     </>;
 }
-

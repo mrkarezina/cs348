@@ -39,7 +39,7 @@ export interface FilterRankingInfo {
 }
 
 export const fetchCountryInfo = async ({ code }: { code: string }): Promise<CountryStats> => {
-    const info = await fetch(`${COUNTRY_OVERVIEW_URL}${code}`).then(res => res.json()).then(data => data);
+    const info = await fetch(`${COUNTRY_OVERVIEW_URL}${code}`).then(res => res.json());
     return {
         code,
         name: countriesMap[code?.toLowerCase()],
@@ -58,36 +58,30 @@ export const createNewUser = async (user_signup_info: UserSignUpInfo): Promise<M
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(user_signup_info)
-    }).then(res => res.json()).then(data => data);
+    }).then(res => res.json());
 
-    return {
-        message
-    }
+    return message;
 }
 
-export const LoginUser = async (user_signup_info: UserSignUpInfo): Promise<Message> => {
+export const loginUser = async (user_signup_info: UserSignUpInfo): Promise<Message> => {
     const message = await fetch(USER_LOGIN_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(user_signup_info)
-    }).then(res => res.json()).then(data => data);
+    }).then(res => res.json());
 
-    return {
-        message
-    }
+    return message;
 }
 
-// get score for the logined user
+// get score for the logged in user
 export const getUserInfo = async (username: string): Promise<UserInfo> => {
-    return await fetch(`${USER_INFO_URL}${username}`).then(res => res.json()).then(data => data);
+    return await fetch(`${USER_INFO_URL}${username}`).then(res => res.json());
 }
 
 export const getLeaderboard = async (): Promise<[string, number][]> => {
-    return await fetch(LEADERBOARD_URL).then(res => res.json()).then(data => data);
+    return await fetch(LEADERBOARD_URL).then(res => res.json());
 }
 
 // export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<> => {
 //     //TODO
 // }
-
-

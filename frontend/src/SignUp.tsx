@@ -19,11 +19,11 @@ export default function SignUp({ setUsername }: { setUsername: (username: string
     const submitLoginSignUp = (user_signup_info: UserSignUpInfo) => {
         // make api call
         createNewUser(user_signup_info)
-            .then(() => {
+            .then(message => {
+                if ('error' in message) throw message.error;
                 showNotification({ title: `Signed up and logged in as ${user_signup_info.username}`, message: '' });
                 setUsername(user_signup_info.username);
-            }
-            )
+            })
             .catch(err => {
                 console.error(err);
                 showNotification({ title: 'ERROR: Could not login or signup', message: err, color: 'red' });
@@ -40,4 +40,3 @@ export default function SignUp({ setUsername }: { setUsername: (username: string
         </form>
     </>;
 }
-
