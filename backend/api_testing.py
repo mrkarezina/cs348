@@ -22,19 +22,19 @@ def test__country_rankings_by_stat__happy_path():
                        ['BGD', 165650475.0],
                        ['RUS', 142021981.0],
                        ['MEX', 129150971.0]]
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == top10population
 
     year=2022
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&year={year}"
     response = requests.get(base_url + get_data)
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == top10population
 
     year=9999
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&year={year}"
     response = requests.get(base_url + get_data)
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == []
 
     stat_name = "Population"
@@ -42,7 +42,7 @@ def test__country_rankings_by_stat__happy_path():
     order_by = "DESC"
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&limit={limit}&order_by={order_by}"
     response = requests.get(base_url + get_data)
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == top10population[:8]
 
     stat_name = "area"
@@ -51,7 +51,7 @@ def test__country_rankings_by_stat__happy_path():
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&limit={limit}&order_by={order_by}"
     response = requests.get(base_url + get_data)
     bottom3area = [['VAT', 0], ['MCO', 2], ['GIB', 7]]
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == bottom3area
 
 
@@ -92,7 +92,7 @@ def test__country_stats__happy_path():
         'real_gdp': [24861000000000.0],
         'unemployment_rate': [4.82]
         }}
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == china_stats
 
     year = 9999
@@ -106,7 +106,7 @@ def test__country_stats__happy_path():
         'real_gdp': None,
         'unemployment_rate': None
         }}
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json() == china_stats_empty
 
 
@@ -127,8 +127,8 @@ def test__create_user__error_check():
     post_data = {"username": "somethsiwdngs", "password": ""}
     response = requests.post(base_url + post_url, json=post_data)
     # assert response.status_code == 400
-    print(response.status_code)
-    print(response.json())
+    # print(response.status_code)
+    # print(response.json())
     # assert response.json() == {"error": "Please ensure that your password is greater than 7 characters."}
 
 

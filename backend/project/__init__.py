@@ -47,7 +47,7 @@ def country_rankings_by_stat():
                 ORDER BY value {order_by} \
                 LIMIT {limit};"
             )
-        response = (cursor.fetchall(), 201)
+        response = (cursor.fetchall(), 200)
     except psycopg2.Error as e:
         error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
         response = (error, 400)
@@ -78,7 +78,7 @@ def country_stats():
                                 WHERE country_id = '{country_id}';")
             data[stat] = cursor.fetchone()
             resp = make_response({country_id: data})
-            response = (resp, 201)
+            response = (resp, 200)
     except psycopg2.Error as e:
         error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
         response = (error, 400)
@@ -121,11 +121,11 @@ def login_user():
     data = str(cursor.fetchone()[0])
     cursor.close()
 
-    # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 201
+    # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 200
     if data == 'False':
-        return {"error": "Incorrect credentials."}, 201
+        return {"error": "Incorrect credentials."}, 200
     else:
-        return {"message": "Correct credentials."}, 201
+        return {"message": "Correct credentials."}, 200
     
 
 # GET api/get_user?username={str}
