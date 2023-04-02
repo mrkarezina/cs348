@@ -1,6 +1,6 @@
-import { TextInput, Button, Container, Avatar, Flex, Space, Table, Text, Divider } from '@mantine/core';
-import { useState, useEffect } from 'react';
-import { UserInfo, getUserInfo } from './apiCalls';
+import { Button, Divider, Flex, Space, Table, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { getUserInfo, UserInfo } from './apiCalls';
 
 export default function UserProfile({ username, logout }: { username: string, logout: () => void }) {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -19,7 +19,7 @@ export default function UserProfile({ username, logout }: { username: string, lo
         )
     });
 
-    
+
     return (
         <Flex direction="column" justify="flex_end">
             {scores?.length ?
@@ -36,7 +36,7 @@ export default function UserProfile({ username, logout }: { username: string, lo
                     <Divider my="sm" />
                 </>
             : <></>}
-            <Text>Number of games played: {scores?.length}</Text> 
+            <Text>Number of games played: {scores?.length}</Text>
             <Space h="xl" />
             <Button onClick={logout}>Logout</Button>
         </Flex>
