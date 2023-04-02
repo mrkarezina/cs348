@@ -78,6 +78,7 @@ def test__country_rankings_by_stat__error_check():
     assert response.status_code == 400
 
 
+
 ##### country_stats
 def test__country_stats__happy_path():
     country_id = "CHN"
@@ -115,8 +116,20 @@ def test__country_stats__error_check():
 
 
 
+##### create_user
+def test__create_user__happy_path():
+    pass
 
 
+def test__create_user__error_check():
+    post_url = "/api/create_user"
+
+    post_data = {"username": "somethsiwdngs", "password": ""}
+    response = requests.post(base_url + post_url, json=post_data)
+    # assert response.status_code == 400
+    print(response.status_code)
+    print(response.json())
+    # assert response.json() == {"error": "Please ensure that your password is greater than 7 characters."}
 
 
 

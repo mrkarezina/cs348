@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, request, make_response
 import psycopg2, os
 import uuid
 from psycopg2 import errors
@@ -47,9 +47,9 @@ def country_rankings_by_stat():
                 ORDER BY value {order_by} \
                 LIMIT {limit};"
             )
-        response = (jsonify(cursor.fetchall()), 201)
+        response = (cursor.fetchall(), 201)
     except psycopg2.Error as e:
-        error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
         response = (error, 400)
     cursor.close()
     return response
@@ -80,36 +80,31 @@ def country_stats():
             resp = make_response({country_id: data})
             response = (resp, 201)
     except psycopg2.Error as e:
-        error = jsonify(f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}")
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
         response = (error, 400)
     cursor.close()
     return response
 
-# TODO: refactor all code below
 
 # POST api/create_user {username: str, password: str}
 # endpoint to create user storing their username and password
 @app.route("/api/create_user", methods=["POST"])
 def create_user():
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-    user_uuid = uuid.uuid4()        
-    
+    username, password = request.get_json()["username"], request.get_json()["password"]
     cursor = connection.cursor()
-
+    response = ({"message": "User created successfully."}, 201)
     try:
-        cursor.execute(f"INSERT INTO users (user_id, username, password) \
-                        VALUES ('{user_uuid}', '{username}', crypt('{password}', gen_salt('bf', 8)));")
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+        cursor.execute(f"INSERT INTO users (username, password) \
+                        VALUES ('{username}', crypt('{password}', gen_salt('bf', 8)));")
     except UniqueViolation:
         if connection: connection.rollback()
-        return jsonify({"error": f"{username} already exists, please use a different username."}), 400
+        response = ({"error": f"{username} already exists, please use a different username."}, 418)
     except CheckViolation:
         if connection: connection.rollback()
-        return jsonify({"error": "Please ensure that your password is greater than 7 characters."}), 400
-    
+        response = ({"error": "Please ensure that your password is greater than 7 characters."}, 418)
     cursor.close()
-    return jsonify({"message": "User created successfully."}), 201
+    return response
 
 
 # POST api/login_user {username: str, password: str}
@@ -128,9 +123,9 @@ def login_user():
 
     # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 201
     if data == 'False':
-        return jsonify({"error": "Incorrect credentials."}), 201
+        return {"error": "Incorrect credentials."}, 201
     else:
-        return jsonify({"message": "Correct credentials."}), 201
+        return {"message": "Correct credentials."}, 201
     
 
 # GET api/get_user?username={str}
@@ -149,7 +144,7 @@ def get_user():
     data = [score[0] for score in data]
     cursor.close()
 
-    return jsonify({"scores": data})
+    return {"scores": data}
 
 # GET api/game
 # endpoint returns list of 5 random country and area tuples
@@ -173,7 +168,7 @@ def get_game():
     data = cursor.fetchall()
     cursor.close()
 
-    return jsonify(data)
+    return data
 
 # POST api/game {username: str, score: int}
 # endpoint to store game result of a user
@@ -189,7 +184,7 @@ def create_game():
                             FROM users \
                             WHERE username = '{username}'), {score});") 
     cursor.close()
-    return jsonify({"message": "Game created successfully."})
+    return {"message": "Game created successfully."}
 
 # GET api/get_leaderboard
 # endpoint returns top 10 scores
@@ -204,7 +199,7 @@ def get_leaderboard():
     data = cursor.fetchall()
     cursor.close()
 
-    return jsonify(data)
+    return data
 
 @app.after_request
 def after_request_func(response):
