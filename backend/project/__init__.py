@@ -159,29 +159,33 @@ def user_scores():
 # TODO: fix up game related apis
 
 
-# GET api/game
+# GET api/game?stat_name={str}
 # endpoint returns list of 5 random country and area tuples
 # [(country_id, area), ...]
 @app.route("/api/game")
 def get_game():
+    stat_name = request.args.get("stat_name", default="Area")
     cursor = connection.cursor()
-
-    cursor.execute("SELECT country_id, value \
-                        FROM (SELECT id \
-                                FROM country \
-                                ORDER BY RANDOM() \
-                                LIMIT 5) AS random_countries \
-                        JOIN (SELECT country_id, value, date_of_info \
-                                FROM Area \
-                                ORDER BY date_of_info DESC) AS areas \
-                        ON random_countries.id = areas.country_id \
-                        GROUP BY country_id, value, date_of_info \
-                        ORDER BY RANDOM();")
-
-    data = cursor.fetchall()
+    try:
+        cursor.execute(
+            f"SELECT Country.name, Random_values.value \
+            FROM ( \
+                SELECT country_id, value \
+                FROM {stat_name}_recent \
+                ORDER BY RANDOM() \
+                LIMIT 5 \
+            ) AS Random_values\
+            JOIN Country \
+            ON Country.id = Random_values.country_id;"
+        )
+        data = cursor.fetchall()
+        response = (data, 200)
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = (error, 400)
     cursor.close()
+    return response
 
-    return data
 
 # POST api/game {username: str, score: int}
 # endpoint to store game result of a user
