@@ -4,7 +4,7 @@ const BASE_API_URL = 'http://localhost:5001/api';
 const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country_stats?country_id=`;
 const USER_SIGN_UP_URL = `${BASE_API_URL}/create_user`;
 const USER_LOGIN_URL = `${BASE_API_URL}/login_user`;
-const USER_INFO_URL = `${BASE_API_URL}/get_user?username=`;
+const USER_INFO_URL = `${BASE_API_URL}/user_scores?username=`;
 
 export interface CountryStats {
     code: string;

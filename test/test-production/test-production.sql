@@ -22,7 +22,7 @@ SELECT country_id, value FROM (SELECT id FROM country ORDER BY RANDOM() LIMIT 5)
 -- POST /api/game
 INSERT INTO games (user_id, score) VALUES ((SELECT user_id FROM users WHERE username = 'rachell'), 100);
 
--- GET /api/get_user
+-- GET /api/user_scores
 SELECT score FROM games WHERE user_id = (SELECT user_id FROM users WHERE username = 'rachell');
 
 -- GET /api/get_leaderboard

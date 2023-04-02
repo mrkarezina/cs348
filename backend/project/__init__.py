@@ -130,10 +130,10 @@ def login_user():
     return response
 
 
-# GET api/get_user?username={str}
+# GET api/user_scores?username={str}
 # endpoint returns array of scores corresponding to games user played
-@app.route("/api/get_user")
-def get_user():
+@app.route("/api/user_scores")
+def user_scores():
     username = request.args.get("username")
     
     cursor = connection.cursor()

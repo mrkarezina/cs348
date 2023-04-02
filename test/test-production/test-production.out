@@ -79,7 +79,7 @@ GET /api/game:
  BHS        |  13880
 (5 rows)
 
-POST /api/game, followed by, GET /api/get_user:
+POST /api/game, followed by, GET /api/user_scores:
  score
 -------
    100
