@@ -135,18 +135,25 @@ def login_user():
 @app.route("/api/user_scores")
 def user_scores():
     username = request.args.get("username")
-    
     cursor = connection.cursor()
-    cursor.execute(f"SELECT score \
-                    FROM games \
-                    WHERE user_id = (SELECT user_id \
-                                    FROM users \
-                                    WHERE username = '{username}');") 
-    data = cursor.fetchall()
-    data = [score[0] for score in data]
+    try:
+        cursor.execute(
+            f"SELECT score \
+            FROM games \
+            WHERE user_id = ( \
+                SELECT user_id \
+                FROM users \
+                WHERE username = '{username}' \
+            );"
+        )
+        data = cursor.fetchall()
+        data = [score[0] for score in data]
+        response = ({"scores": data}, 200)
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = (error, 400)
     cursor.close()
-
-    return {"scores": data}
+    return response
 
 
 
