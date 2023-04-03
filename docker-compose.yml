@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python manage.py run -h 0.0.0.0
+    command: /usr/src/app/api/entrypoint.sh
     volumes:
       - ./backend:/usr/src/app/api
       - ./raw_data:/usr/src/input_data
