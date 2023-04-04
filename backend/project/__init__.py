@@ -77,8 +77,8 @@ def country_rankings_by_stat():
                 ORDER BY value {order_by} \
                 LIMIT {limit};").format(
                     table_name=table_name,
-                    region_id=sql.SQL(region_id), 
-                    order_by=sql.SQL(order_by), 
+                    region_id=sql.SQL(region_id),
+                    order_by=sql.SQL(order_by),
                     limit=sql.Literal(limit)
         )
         cursor.execute(query)
@@ -104,7 +104,7 @@ def country_stats():
     try:
         for stat in stats_list:
             table_name = stat if year else stat.join('_recent')
-            if year is not 'date_of_info':
+            if year != 'date_of_info':
                 query = 'SELECT value FROM %s WHERE country_id=%s AND date_of_info=%s;'
                 cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id, year))
             else:
