@@ -7,6 +7,15 @@ import inspect
 base_url = "http://localhost:5001/"
 
 
+##### region_id
+def test__region_id__happy_path():
+    region = "South America"
+    get_data = f"api/region_id?region={region}"
+    response = requests.get(base_url + get_data)
+    assert response.status_code == 200
+    
+
+
 ##### country_rankings_by_stat
 def test__country_rankings_by_stat__happy_path():
     stat_name = "Population"

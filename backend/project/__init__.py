@@ -20,6 +20,25 @@ connection.autocommit = True
 def index():
    return app.send_static_file('index.html')
 
+# GET api/region_id?region={str}
+@app.route("/api/region_id")
+def region_id():
+    region = request.args.get("region")
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            f"SELECT id \
+            FROM Region \
+            WHERE name='{region}';"
+        )
+        response = (cursor.fetchall(), 200)
+        print(response)
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = (error, 400)
+    cursor.close()
+    return response
+
 
 # GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}&year={uint}&region_id={str}
 # list of top/bottom n countries for x stat
