@@ -50,9 +50,17 @@ def test__country_rankings_by_stat__happy_path():
     order_by = "ASC"
     get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&limit={limit}&order_by={order_by}"
     response = requests.get(base_url + get_data)
-    bottom3area = [['VAT', 0], ['MCO', 2], ['GIB', 7]]
     assert response.status_code == 200
-    assert response.json() == bottom3area
+    assert response.json() == [['VAT', 0], ['MCO', 2], ['GIB', 7]]
+
+    stat_name = "area"
+    limit = 3
+    order_by = "ASC"
+    region_id = 5
+    get_data = f"api/country_rankings_by_stat?stat_name={stat_name}&limit={limit}&order_by={order_by}&region_id={region_id}"
+    response = requests.get(base_url + get_data)
+    assert response.status_code == 200
+    assert response.json() == [['BVT', 49], ['HMD', 412], ['ATA', 14200000]]
 
 
 def test__country_rankings_by_stat__error_check():
