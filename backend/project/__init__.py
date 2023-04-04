@@ -215,15 +215,17 @@ def create_game():
     cursor.close()
     return {"message": "Game created successfully."}
 
+
 # GET api/get_leaderboard
-# endpoint returns top 10 scores
+# endpoint returns top 10 players
 @app.route("/api/get_leaderboard")
 def get_leaderboard():
     cursor = connection.cursor()
-    cursor.execute("SELECT username, score \
+    cursor.execute("SELECT username, MAX(score) \
                     FROM games \
-                    JOIN users ON games.user_id = users.user_id \
-                    ORDER BY score DESC \
+                    NATURAL JOIN users \
+                    GROUP BY username \
+                    ORDER BY MAX(score) DESC \
                     LIMIT 10;") 
     data = cursor.fetchall()
     cursor.close()
