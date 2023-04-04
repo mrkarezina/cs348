@@ -45,7 +45,7 @@ export default function App() {
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
   const [rankingStat, setRankingStat] = useState<string | null>(null);
   const [rankingBatchNum, setRankingBatchNum] = useState<number | null>(10);
-  const [rankingOrder, setRankingOrder] = useState<string>("DESC");
+  const [rankingOrder, setRankingOrder] = useState<string>('DESC');
   const [rankingRegion, setRankingRegion] = useState<string | null>(null);
 
   const [username, setUsername] = useCookie('username', null);
@@ -73,7 +73,7 @@ export default function App() {
             {leftDrawerTitle == 'Country Rankings' && <>
               <Flex direction={'column'} style={{ margin: 6 }}>
                   <Select
-                    label="Select stat name to rank the countries by"
+                    label='Select stat name to rank the countries by'
                     onChange={value => {
                       setRankingStat(value);
                       if (!!value) {
@@ -85,13 +85,13 @@ export default function App() {
                         }).then(data => setCountryRankings(data));
                       }
                     }}
-                    placeholder={"select stat name"}
+                    placeholder={'select stat name'}
                     defaultValue={rankingStat}
                     data={stats}
                   />
                   <Space h='lg' />
                   <Select
-                    label="Select region"
+                    label='Select region'
                     data={regions}
                     onChange={value => {
                       setRankingRegion(value);
@@ -109,8 +109,8 @@ export default function App() {
                   />
                   <Space h='lg' />
                   <Radio.Group
-                    name="order"
-                    label="Select Order"
+                    name='order'
+                    label='Select Order'
                     onChange={value => {
                       setRankingOrder(value);
                       if (!!rankingStat) {
@@ -125,15 +125,15 @@ export default function App() {
                     }}
                     defaultValue={rankingOrder ? rankingOrder : undefined}
                   >
-                    <Group mt="xs">
-                      <Radio value="ASC" label="↑"/>
-                      <Radio value="DESC" label="↓"/>
+                    <Group mt='xs'>
+                      <Radio value='ASC' label='↑'/>
+                      <Radio value='DESC' label='↓'/>
                     </Group>
                   </Radio.Group>
                   <Space h='lg' />
                   <NumberInput
                     defaultValue={rankingBatchNum ? rankingBatchNum : undefined}
-                    label="Number of Countries to be displayed"
+                    label='Number of Countries to be displayed'
                     onChange={value => {
                       setRankingBatchNum(value ? value : 0);
                       if (!!rankingStat) {
@@ -206,12 +206,12 @@ export default function App() {
         {tooltipStats?.name &&
           <>
             <h3>{tooltipStats.name}</h3>
-            {tooltipStats.population && <div>{`Population: ${tooltipStats.population}`}</div>}
-            {tooltipStats.area && <div>{`Area: ${tooltipStats.area}`}</div>}
-            {tooltipStats.giniIndex && <div>{`Gini Index: ${tooltipStats.giniIndex}`}</div>}
-            {tooltipStats.gdp && <div>{`GDP: ${tooltipStats.gdp}`}</div>}
-            {tooltipStats.education_epd && <div>{`Education Expenditure: ${tooltipStats.education_epd}`}</div>}
-            {tooltipStats.unemployment_rate && <div>{`Unemployment Rate: ${tooltipStats.unemployment_rate}`}</div>}
+            {tooltipStats.population && <div>Population: {tooltipStats.population.toLocaleString('en-US')}</div>}
+            {tooltipStats.area && <div>Area: {tooltipStats.area.toLocaleString('en-US')} km<sup>2</sup></div>}
+            {tooltipStats.giniIndex && <div>Gini Index: {tooltipStats.giniIndex}</div>}
+            {tooltipStats.gdp && <div>GDP: ${tooltipStats.gdp.toLocaleString('en-US')}</div>}
+            {tooltipStats.education_epd && <div>Education Expenditure: {tooltipStats.education_epd}</div>}
+            {tooltipStats.unemployment_rate && <div>Unemployment Rate: {tooltipStats.unemployment_rate}%</div>}
           </>
         }
       </Tooltip>
