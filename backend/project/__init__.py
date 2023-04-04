@@ -2,6 +2,7 @@ from flask import Flask, request, make_response
 import psycopg2, os
 import uuid
 from psycopg2 import errors
+from psycopg2.extensions import AsIs, quote_ident
 
 UniqueViolation = errors.lookup('23505')
 CheckViolation = errors.lookup('23514')
@@ -27,9 +28,10 @@ def region_id():
     cursor = connection.cursor()
     try:
         cursor.execute(
-            f"SELECT id \
-            FROM Region \
-            WHERE name='{region}';"
+            "SELECT id \
+             FROM Region \
+             WHERE name = %s;",
+            (region, )
         )
         response = (cursor.fetchall(), 200)
         print(response)
@@ -83,14 +85,15 @@ def country_stats():
     try:
         for stat in stats_list:
             table_name = stat if year else stat.join("_recent")
-            cursor.execute(
-                f"SELECT value \
-                FROM {table_name} \
-                WHERE date_of_info={year} AND country_id ='{country_id}';"
-            )
+            if year is not "date_of_info":
+                query = "SELECT value FROM %s WHERE country_id=%s AND date_of_info=%s;"
+                cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id, year))
+            else:
+                query = "SELECT value FROM %s WHERE country_id=%s;"
+                cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id))
             data[stat] = cursor.fetchone()
-            resp = make_response({country_id: data})
-            response = (resp, 200)
+        resp = make_response({country_id: data})
+        response = (resp, 200)
     except psycopg2.Error as e:
         error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
         response = (error, 400)
@@ -107,8 +110,8 @@ def create_user():
     response = ({"message": "User created successfully."}, 201)
     try:
         cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
-        cursor.execute(f"INSERT INTO users (username, password) \
-                        VALUES ('{username}', crypt('{password}', gen_salt('bf', 8)));")
+        cursor.execute("INSERT INTO users (username, password) \
+                        VALUES (%s, crypt(%s, gen_salt('bf', 8)));", (username, password))
     except UniqueViolation:
         if connection: connection.rollback()
         response = ({"error": f"{username} already exists, please use a different username."}, 418)
@@ -127,12 +130,11 @@ def login_user():
     cursor = connection.cursor()
     try:
         cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
-        cursor.execute(
-            f"SELECT EXISTS (SELECT 1 FROM users \
-            WHERE username = '{username}' AND password = crypt('{password}', password));"
-        )
+        query = "SELECT EXISTS (SELECT 1 FROM users \
+                 WHERE username = %s AND password = crypt(%s, password));"
+        cursor.execute(query, (username, password))
         result = cursor.fetchone()[0]
-        # Both outcomes are possible from a successful validaiton call, thus they both have response codes of 200
+        # Both outcomes are possible from a successful validation call, thus they both have response codes of 200
         message = {"message": "Correct credentials."} if result else {"error": "Incorrect credentials."}
         response = (message, 200)
     except psycopg2.Error as e:
@@ -150,13 +152,14 @@ def user_scores():
     cursor = connection.cursor()
     try:
         cursor.execute(
-            f"SELECT score \
-            FROM games \
-            WHERE user_id = ( \
+            "SELECT score \
+             FROM games \
+             WHERE user_id = ( \
                 SELECT user_id \
                 FROM users \
-                WHERE username = '{username}' \
-            );"
+                WHERE username = %s \
+             );",
+            (username,)
         )
         data = cursor.fetchall()
         data = [score[0] for score in data]
@@ -169,6 +172,7 @@ def user_scores():
 
 
 # TODO: fix up game related apis
+# TODO: figure out why (AsIs(quote_ident(table_name, cursor)) doesn't work 
 
 
 # GET api/game?stat_name={str}
@@ -180,15 +184,16 @@ def get_game():
     cursor = connection.cursor()
     try:
         cursor.execute(
-            f"SELECT Country.name, Random_values.value \
-            FROM ( \
-                SELECT country_id, value \
-                FROM {stat_name}_recent \
-                ORDER BY RANDOM() \
-                LIMIT 5 \
-            ) AS Random_values\
-            JOIN Country \
-            ON Country.id = Random_values.country_id;"
+            "SELECT Country.name, Random_values.value \
+                FROM ( \
+                    SELECT country_id, value \
+                    FROM %s \
+                    ORDER BY RANDOM() \
+                    LIMIT 5 \
+                ) AS Random_values\
+                JOIN Country \
+                ON Country.id = Random_values.country_id;",
+            (AsIs(stat_name + '_recent'), )
         )
         data = cursor.fetchall()
         response = (data, 200)
@@ -197,7 +202,6 @@ def get_game():
         response = (error, 400)
     cursor.close()
     return response
-
 
 # POST api/game {username: str, score: int}
 # endpoint to store game result of a user
@@ -208,10 +212,17 @@ def create_game():
     score = data["score"]
 
     cursor = connection.cursor()
-    cursor.execute(f"INSERT INTO games (user_id, score) \
-                    VALUES ((SELECT user_id \
-                            FROM users \
-                            WHERE username = '{username}'), {score});") 
+    try:
+        cursor.execute("INSERT INTO games (user_id, score) \
+                        VALUES ((SELECT user_id \
+                                FROM users \
+                                WHERE username = %s), %s);", (username, score))
+        connection.commit()
+        response = {"message": "Game created successfully."}
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = {"error": error}
+        connection.rollback()
     cursor.close()
     return {"message": "Game created successfully."}
 
