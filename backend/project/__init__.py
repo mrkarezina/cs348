@@ -133,9 +133,6 @@ def create_user():
     except UniqueViolation:
         if connection: connection.rollback()
         response = ({'error': f'{username} already exists, please use a different username.'}, 418)
-    except CheckViolation:
-        if connection: connection.rollback()
-        response = ({'error': 'Please ensure that your password is greater than 7 characters.'}, 418)
     cursor.close()
     return response
 
