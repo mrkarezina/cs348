@@ -24,7 +24,7 @@ export default function CountryRankings({ rankings }: { rankings: Array<[string,
 
 
     return (
-        <ScrollArea h={300}>
+        <ScrollArea h={600}>
             <Flex direction="column" justify="flex_end">
                 {countryRows ?
                     <>
