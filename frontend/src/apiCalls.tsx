@@ -48,7 +48,7 @@ export const fetchCountryInfo = async ({ code }: { code: string }): Promise<Coun
         population: info[`${code}`].population,
         area: info[`${code}`].area,
         giniIndex: info[`${code}`].gini_index,
-        gdp: info[`${code}`].gdp,
+        gdp: info[`${code}`].real_gdp,
         unemployment_rate: info[`${code}`].unemployment_rate,
         education_epd: info[`${code}`].education_expenditure,
     };
