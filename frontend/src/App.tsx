@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Container, Divider, Drawer, Flex, Group, Modal, Radio, ScrollArea, Select, Slider, Space, Text } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Container, Divider, Drawer, Flex, Group, Modal, NumberInput, Radio, ScrollArea, Select, Slider, Space, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
@@ -44,7 +44,7 @@ export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
   const [rankingStat, setRankingStat] = useState<string | null>(null);
-  const [rankingBatchNum, setRankingBatchNum] = useState<number | null>(null);
+  const [rankingBatchNum, setRankingBatchNum] = useState<number | null>(10);
   const [rankingOrder, setRankingOrder] = useState<string>("DESC");
   const [rankingRegion, setRankingRegion] = useState<string | null>(null);
 
@@ -86,9 +86,8 @@ export default function App() {
                       }
                     }}
                     placeholder={"select stat name"}
-                    value={rankingStat}
+                    defaultValue={rankingStat}
                     data={stats}
-                    searchable
                   />
                   <Space h='lg' />
                   <Select
@@ -105,9 +104,8 @@ export default function App() {
                         }).then(data => setCountryRankings(data));
                       }
                     }}
-                    value={rankingRegion}
+                    defaultValue={rankingRegion}
                     clearable
-                    searchable
                   />
                   <Space h='lg' />
                   <Radio.Group
@@ -116,6 +114,7 @@ export default function App() {
                     onChange={value => {
                       setRankingOrder(value);
                       if (!!rankingStat) {
+                        console.log(rankingStat);
                         getCountryRankings({
                           statName: rankingStat,
                           region_id: rankingRegion,
@@ -124,7 +123,7 @@ export default function App() {
                         }).then(data => setCountryRankings(data));
                       }
                     }}
-                    value={rankingOrder ? rankingOrder : undefined}
+                    defaultValue={rankingOrder ? rankingOrder : undefined}
                   >
                     <Group mt="xs">
                       <Radio value="ASC" label="↑"/>
@@ -132,31 +131,22 @@ export default function App() {
                     </Group>
                   </Radio.Group>
                   <Space h='lg' />
-                  <Text size="sm" >Number of Countries</Text>
-                  <Space h='sm' />
-                  <Slider
-                    marks={[
-                      { value: 0, label: '' },
-                      { value: 10, label: '10' },
-                      { value: 20, label: '20' },
-                      { value: 30, label: '30' },
-                      { value: 40, label: '40' },
-                      { value: 50, label: '' },
-                    ]}
+                  <NumberInput
+                    defaultValue={rankingBatchNum ? rankingBatchNum : undefined}
+                    label="Number of Countries to be displayed"
                     onChange={value => {
-                      setRankingBatchNum(value);
+                      setRankingBatchNum(value ? value : 0);
                       if (!!rankingStat) {
+                        console.log(rankingStat);
                         getCountryRankings({
                           statName: rankingStat,
                           region_id: rankingRegion,
-                          n: value,
+                          n: value ? value : 0,
                           order: rankingOrder,
                         }).then(data => setCountryRankings(data));
                       }
                     }}
-                    value={rankingBatchNum ? rankingBatchNum : undefined}
-                    max={50}
-                    style={{ marginBottom: 40 }}
+                    style={{ marginBottom: 8 }}
                   />
                   <Space h='lg' />
                   {countryRankings ? <CountryRankings rankings={countryRankings}/> : <></>}
