@@ -36,7 +36,6 @@ def region_id():
             (region, )
         )
         response = (cursor.fetchall(), 200)
-        print(response)
     except psycopg2.Error as e:
         error = format_error(e)
         response = (error, 400)
@@ -50,7 +49,6 @@ def regions():
     try:
         cursor.execute('SELECT id, name FROM Region;')
         response = (cursor.fetchall(), 200)
-        print(response)
     except psycopg2.Error as e:
         error = format_error(e)
         response = (error, 400)
@@ -66,17 +64,19 @@ def country_rankings_by_stat():
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit", default=10)
     order_by = request.args.get("order_by", default="DESC")
+    year = request.args.get("year", default="date_of_info")
     region_id = request.args.get("region_id", default="region_id")
-    table_name = sql.Identifier(stat_name + "_recent")
+    table_name = stat_name if year else stat_name.join("_recent")
     cursor = connection.cursor()
     try:
         query = sql.SQL("SELECT country_id, value \
                 FROM {table_name} \
                 JOIN Country ON Country.id={table_name}.country_id \
-                WHERE region_id={region_id} \
+                WHERE date_of_info={year} AND region_id={region_id} \
                 ORDER BY value {order_by} \
                 LIMIT {limit};").format(
-                    table_name=table_name,
+                    table_name=sql.SQL(table_name),
+                    year=sql.SQL(year),
                     region_id=sql.SQL(region_id),
                     order_by=sql.SQL(order_by),
                     limit=sql.Literal(limit)
@@ -104,12 +104,8 @@ def country_stats():
     try:
         for stat in stats_list:
             table_name = stat if year else stat.join('_recent')
-            if year != 'date_of_info':
-                query = 'SELECT value FROM %s WHERE country_id=%s AND date_of_info=%s;'
-                cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id, year))
-            else:
-                query = 'SELECT value FROM %s WHERE country_id=%s;'
-                cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id))
+            query = 'SELECT value FROM %s WHERE country_id=%s AND date_of_info=%s;'
+            cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id, year))
             data[stat] = cursor.fetchone()
         resp = make_response({country_id: data})
         response = (resp, 200)
