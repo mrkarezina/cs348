@@ -35,7 +35,7 @@ export default function Game({ username }: { username: string }) {
         {questions.length === question && <>
             <Text>Your score: {score} / {questions.length}</Text>
             <Text>Answers</Text>
-            {questions.map((item, i) => <Text key={i}>Country {item[0]} has area of {item[1]} km^2</Text>)}
+            {questions.map((item, i) => <Text key={i}>Country {item[0]} has area of {item[1]} <span>km<sup>2</sup></span></Text>)}
         </>}
         {questions.length && question < questions.length && <>
             <Text>Q{question + 1} of {questions.length}: Guess the area of {questions[question][0]}?</Text>
