@@ -129,13 +129,10 @@ def create_user():
     response = ({'message': 'User created successfully.'}, 201)
     try:
         cursor.execute('CREATE EXTENSION IF NOT EXISTS pgcrypto;')
-        cursor.execute('INSERT INTO users (username, password) VALUES (%s, crypt(%s, gen_salt("bf", 8)));', (username, password))
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, crypt(%s, gen_salt('bf', 8)));", (username, password))
     except UniqueViolation:
         if connection: connection.rollback()
         response = ({'error': f'{username} already exists, please use a different username.'}, 418)
-    except CheckViolation:
-        if connection: connection.rollback()
-        response = ({'error': 'Please ensure that your password is greater than 7 characters.'}, 418)
     cursor.close()
     return response
 
