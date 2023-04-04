@@ -27,4 +27,3 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY backend/ .
-RUN chmod +x entrypoint.sh
