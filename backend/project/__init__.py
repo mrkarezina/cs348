@@ -1,7 +1,7 @@
 from flask import Flask, request, make_response
 import psycopg2, os
 import uuid
-from psycopg2 import errors
+from psycopg2 import errors, sql
 from psycopg2.extensions import AsIs, quote_ident
 
 UniqueViolation = errors.lookup('23505')
@@ -63,22 +63,25 @@ def regions():
 # order_by must be one of ASC or DESC
 @app.get('/api/country_rankings_by_stat')
 def country_rankings_by_stat():
-    stat_name = request.args.get('stat_name')
-    limit = request.args.get('limit', default=10)
-    order_by = request.args.get('order_by', default='DESC')
-    year = request.args.get('year', default='date_of_info')
-    region_id = request.args.get('region_id', default='region_id')
-    table_name = stat_name if year else stat_name.join('_recent')
+    stat_name = request.args.get("stat_name")
+    limit = request.args.get("limit", default=10)
+    order_by = request.args.get("order_by", default="DESC")
+    region_id = request.args.get("region_id", default="region_id")
+    table_name = sql.Identifier(stat_name + "_recent")
     cursor = connection.cursor()
     try:
-        cursor.execute(
-            f'SELECT country_id, value \
-            FROM {table_name} \
-            JOIN Country ON Country.id={table_name}.country_id \
-            WHERE date_of_info={year} AND region_id={region_id} \
-            ORDER BY value {order_by} \
-            LIMIT {limit};'
+        query = sql.SQL("SELECT country_id, value \
+                FROM {table_name} \
+                JOIN Country ON Country.id={table_name}.country_id \
+                WHERE region_id={region_id} \
+                ORDER BY value {order_by} \
+                LIMIT {limit};").format(
+                    table_name=table_name,
+                    region_id=sql.SQL(region_id), 
+                    order_by=sql.SQL(order_by), 
+                    limit=sql.Literal(limit)
         )
+        cursor.execute(query)
         response = (cursor.fetchall(), 200)
     except psycopg2.Error as e:
         error = f'{type(e).__module__.removesuffix(".errors")}:{type(e).__name__}: {str(e).rstrip()}'
@@ -190,25 +193,23 @@ def user_scores():
 # TODO: figure out why (AsIs(quote_ident(table_name, cursor)) doesn't work
 
 
-# GET api/game?stat_name={str}
+# GET api/game
 # endpoint returns list of 5 random country and area tuples
 # [(country_id, area), ...]
 @app.get('/api/game')
 def get_game():
-    stat_name = request.args.get('stat_name', default='Area')
     cursor = connection.cursor()
     try:
         cursor.execute(
             'SELECT Country.name, Random_values.value \
                 FROM ( \
                     SELECT country_id, value \
-                    FROM %s \
+                    FROM Area_recent \
                     ORDER BY RANDOM() \
                     LIMIT 5 \
                 ) AS Random_values\
                 JOIN Country \
-                ON Country.id = Random_values.country_id;',
-            (AsIs(stat_name + '_recent'), )
+                ON Country.id = Random_values.country_id;'
         )
         data = cursor.fetchall()
         response = (data, 200)
