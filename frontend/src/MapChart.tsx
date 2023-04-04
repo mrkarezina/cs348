@@ -25,7 +25,6 @@ const MapChart = ({ setTooltipStats, setCountryStats, countryStats }: {
                             hoveredGeoId.current = geo.id;
                             const infoObj = await fetchCountryInfo({ code: geo.id });
                             if (hoveredGeoId.current === geo.id) {
-                                console.log('test');
                                 if (infoObj !== undefined) {
                                     setTooltipStats({
                                         code: geo.id,
