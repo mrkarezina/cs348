@@ -20,8 +20,27 @@ connection.autocommit = True
 def index():
    return app.send_static_file('index.html')
 
+# GET api/region_id?region={str}
+@app.route("/api/region_id")
+def region_id():
+    region = request.args.get("region")
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            f"SELECT id \
+            FROM Region \
+            WHERE name='{region}';"
+        )
+        response = (cursor.fetchall(), 200)
+        print(response)
+    except psycopg2.Error as e:
+        error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
+        response = (error, 400)
+    cursor.close()
+    return response
 
-# GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}&year={uint}
+
+# GET api/country_rankings_by_stat?stat_name={str}&limit={uint}&order_by={str}&year={uint}&region_id={str}
 # list of top/bottom n countries for x stat
 # order_by must be one of ASC or DESC
 @app.route("/api/country_rankings_by_stat")
@@ -29,24 +48,19 @@ def country_rankings_by_stat():
     stat_name = request.args.get("stat_name")
     limit = request.args.get("limit", default=10)
     order_by = request.args.get("order_by", default="DESC")
-    year = request.args.get("year")
+    year = request.args.get("year", default="date_of_info")
+    region_id = request.args.get("region_id", default="region_id")
+    table_name = stat_name if year else stat_name.join("_recent")
     cursor = connection.cursor()
     try:
-        if year:
-            cursor.execute(
-                f"SELECT country_id, value \
-                FROM {stat_name} \
-                WHERE date_of_info={year} \
-                ORDER BY value {order_by} \
-                LIMIT {limit};"
-            )
-        else:
-            cursor.execute(
-                f"SELECT country_id, value \
-                FROM {stat_name}_recent \
-                ORDER BY value {order_by} \
-                LIMIT {limit};"
-            )
+        cursor.execute(
+            f"SELECT country_id, value \
+            FROM {table_name} \
+            JOIN Country ON Country.id={table_name}.country_id \
+            WHERE date_of_info={year} AND region_id={region_id} \
+            ORDER BY value {order_by} \
+            LIMIT {limit};"
+        )
         response = (cursor.fetchall(), 200)
     except psycopg2.Error as e:
         error = f"{type(e).__module__.removesuffix('.errors')}:{type(e).__name__}: {str(e).rstrip()}"
@@ -60,7 +74,7 @@ def country_rankings_by_stat():
 @app.route("/api/country_stats")
 def country_stats():
     country_id = request.args.get("country_id")
-    year = request.args.get("year")
+    year = request.args.get("year", default="date_of_info")
     stats_list = []
     for filename in os.listdir("/usr/src/input_data/"):
         stats_list.append(filename[:-4])
@@ -68,14 +82,12 @@ def country_stats():
     cursor = connection.cursor()
     try:
         for stat in stats_list:
-            if year:
-                cursor.execute(f"SELECT value \
-                                FROM {stat} \
-                                WHERE date_of_info={year} AND country_id = '{country_id}';")
-            else:
-                cursor.execute(f"SELECT value \
-                                FROM {stat}_recent \
-                                WHERE country_id = '{country_id}';")
+            table_name = stat if year else stat.join("_recent")
+            cursor.execute(
+                f"SELECT value \
+                FROM {table_name} \
+                WHERE date_of_info={year} AND country_id ='{country_id}';"
+            )
             data[stat] = cursor.fetchone()
             resp = make_response({country_id: data})
             response = (resp, 200)
@@ -203,15 +215,17 @@ def create_game():
     cursor.close()
     return {"message": "Game created successfully."}
 
+
 # GET api/get_leaderboard
-# endpoint returns top 10 scores
+# endpoint returns top 10 players
 @app.route("/api/get_leaderboard")
 def get_leaderboard():
     cursor = connection.cursor()
-    cursor.execute("SELECT username, score \
+    cursor.execute("SELECT username, MAX(score) \
                     FROM games \
-                    JOIN users ON games.user_id = users.user_id \
-                    ORDER BY score DESC \
+                    NATURAL JOIN users \
+                    GROUP BY username \
+                    ORDER BY MAX(score) DESC \
                     LIMIT 10;") 
     data = cursor.fetchall()
     cursor.close()

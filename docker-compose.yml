@@ -4,7 +4,7 @@ services:
   web:
     build: .
     command: >
-      bash -c "python manage.py create_and_populate_tables_if_not_exist && flask run --host=0.0.0.0"
+      bash -c "python manage.py setup && flask run --host=0.0.0.0"
     volumes:
       - ./backend:/usr/src/app/api
       - ./raw_data:/usr/src/input_data

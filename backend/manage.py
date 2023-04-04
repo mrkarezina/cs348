@@ -11,23 +11,7 @@ class StatTableManager:
                               password="password",
                               host="db",
                               port="5432",
-                              database="world_factbook")
-
-    def run_all_scripts(self):
-        self.create_static_tables()
-        self.create_stat_tables()
-        self.populate_static_tables()
-        self.populate_stat_tables()
-        self.create_recent_stat_tables()
-        self.populate_recent_stat_tables()
-        print("Tables created and populated successfully.")
-
-    def run_all_scripts_with_check(self):
-        if self.check_tables_exist():
-            print("SKIPPING DB INITIALIZATION: Tables already exist and are populated.")
-        else:
-            print("INITIALIZING DB: Tables do not exist. Executing scripts ...")
-            self.run_all_scripts()
+                              database="world_factbook")        
 
     def check_tables_exist(self):
         cursor = self.conn.cursor()
@@ -92,11 +76,36 @@ class StatTableManager:
             )
         self.conn.commit()
 
+    def auto_population(self):
+        if self.check_tables_exist():
+            print("SKIPPING DB INITIALIZATION: Tables already exist and are populated.")
+        else:
+            print("INITIALIZING DB: Tables do not exist. Executing scripts ...")
+            self.create_static_tables()
+            self.create_stat_tables()
+            self.populate_static_tables()
+            self.populate_stat_tables()
+            self.create_recent_stat_tables()
+            self.populate_recent_stat_tables()
+            print("Tables created and populated successfully.")
+    
+    def update_stat_tables(self):
+        self.create_stat_tables()
+        self.create_recent_stat_tables()
+        self.populate_stat_tables()
+        self.populate_recent_stat_tables()
 
 
-@cli.command("create_and_populate_tables_if_not_exist")
-def create_and_populate_tables_if_not_exist():
-    StatTableManager().run_all_scripts_with_check()
+@cli.command("setup")
+def setup():
+    StatTableManager().auto_population()
+
+
+@cli.command("update")
+def update():
+    StatTableManager().update_stat_tables()
+
+
 
 if __name__ == "__main__":
     cli()
