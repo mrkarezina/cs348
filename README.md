@@ -1,5 +1,10 @@
 # CS 348 Project
 
+## Description
+A world stats interface that allows you to learn about different countries and play games.
+![image](https://user-images.githubusercontent.com/57971748/228081489-cbc4c5d8-fc1b-4e13-836f-f0b24f7e075d.png)
+
+
 ## Running the application
 
 ```
