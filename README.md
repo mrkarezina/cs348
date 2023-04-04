@@ -14,30 +14,13 @@ A world stats interface that allows you to learn about different countries and p
 
 ## Running the application
 
-### Build all images and start containers:
 ```
 docker-compose up
 ```
-The first time the containers are built, the database is completely empty. The user would have to run the appropriate commands to populate the database
 
-### Creating, populating and updating tables
-To see a list of make commands to assist with creating and populating tables, run:
-```
-make
-```
+This command will build the docker images, start the db and web containers, and seed the database.
 
-
-The first time the program is run, to initialize the database with data run:
-```
-make setup
-```
-
-
-To update country data, add the new data into the tables in the raw_data folder and run:
-```
-make update
-```
-
+The first time the containers are built, the database is completely empty. A script will automatically detect if the tables are empty and seed them with the world statistics. If the tables already exist and are populated this initialization step will be skipped.
 
 Database Information
 - [PostgreSQL](https://www.postgresql.org/download/)
