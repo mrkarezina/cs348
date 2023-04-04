@@ -104,8 +104,12 @@ def country_stats():
     try:
         for stat in stats_list:
             table_name = stat if year else stat.join('_recent')
-            query = 'SELECT value FROM %s WHERE country_id=%s AND date_of_info=%s;'
-            cursor.execute(query, (AsIs(quote_ident(table_name, cursor)), country_id, year))
+            query = sql.SQL("SELECT value FROM {table_name} WHERE country_id='{country_id}' AND date_of_info={year};").format(
+                    table_name=sql.SQL(table_name),
+                    country_id=sql.SQL(country_id),
+                    year=sql.SQL(year)
+            )
+            cursor.execute(query)
             data[stat] = cursor.fetchone()
         resp = make_response({country_id: data})
         response = (resp, 200)
