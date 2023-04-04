@@ -1,13 +1,13 @@
 import { countriesMap } from './Countries';
 
 const BASE_API_URL = 'http://localhost:5001/api';
-const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country-overview?country_id=`;
-const USER_SIGN_UP_URL = `${BASE_API_URL}/create-user`;
-const USER_LOGIN_URL = `${BASE_API_URL}/login-user`;
-const USER_INFO_URL = `${BASE_API_URL}/get-user?username=`;
-const LEADER_BOARD_URL = `${BASE_API_URL}/get-leaderboard`;
+const COUNTRY_OVERVIEW_URL = `${BASE_API_URL}/country_stats?country_id=`;
+const USER_SIGN_UP_URL = `${BASE_API_URL}/create_user`;
+const USER_LOGIN_URL = `${BASE_API_URL}/login_user`;
+const USER_INFO_URL = `${BASE_API_URL}/user_scores?username=`;
+const LEADER_BOARD_URL = `${BASE_API_URL}/get_leaderboard`;
 const GAME_URL = `${BASE_API_URL}/game`;
-const GET_COUNTRIES_RANKING = `${BASE_API_URL}/get-countries`;
+const GET_COUNTRIES_RANKING = `${BASE_API_URL}/country_rankings_by_stat`;
 
 export interface CountryStats {
     code: string;
