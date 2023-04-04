@@ -7,7 +7,7 @@ const USER_LOGIN_URL = `${BASE_API_URL}/login_user`;
 const USER_INFO_URL = `${BASE_API_URL}/user_scores?username=`;
 const LEADER_BOARD_URL = `${BASE_API_URL}/get_leaderboard`;
 const GAME_URL = `${BASE_API_URL}/game`;
-const GET_COUNTRIES_RANKING = `${BASE_API_URL}/country_rankings_by_stat`;
+const GET_COUNTRIES_RANKING = `${BASE_API_URL}/country_rankings_by_stat?stat_name=`;
 
 export interface CountryStats {
     code: string;
@@ -96,6 +96,6 @@ export const submitScore = async (username: string, score: number): Promise<Reco
     }).then(res => res.json());
 };
 
-// export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<> => {
-//     //TODO
-// }
+export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<Array<[string, number]>> => {
+    return await fetch(`${GET_COUNTRIES_RANKING}${filterRankingInfo.statName}`).then(res => res.json());
+}

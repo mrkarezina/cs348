@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown } from 'semantic-ui-react';
-import { CountryStats, fetchCountryInfo, getLeaderboard } from './apiCalls';
+import { CountryStats, fetchCountryInfo, getCountryRankings, getLeaderboard } from './apiCalls';
 import { countryOptions } from './Countries';
 import Game from './Game';
 import Leaderboard from './Leaderboard';
@@ -57,7 +57,10 @@ export default function App() {
                   style={{ width: 20 }}
                   selection
                   onChange={async (event, data) => {
-                    setRankingStat(data.name);
+                    setRankingStat(data.value?.toString().toLowerCase() || '');
+                    if (!!rankingStat) {
+                      getCountryRankings({ statName: rankingStat }).then(data => console.log(data));
+                    }
                   }}
                   text={rankingStat!}
                   options={stats}
