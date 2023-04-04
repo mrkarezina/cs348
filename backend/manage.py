@@ -94,8 +94,8 @@ class StatTableManager:
 
 
 
-@cli.command("run_all_scripts_with_check")
-def run_all_scripts_with_check():
+@cli.command("create_and_populate_tables_if_not_exist")
+def create_and_populate_tables_if_not_exist():
     StatTableManager().run_all_scripts_with_check()
 
 if __name__ == "__main__":
