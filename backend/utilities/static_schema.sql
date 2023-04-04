@@ -20,8 +20,7 @@ CREATE TABLE Users(
     user_id UUID DEFAULT gen_random_uuid (),
     username VARCHAR(50) NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    PRIMARY KEY (user_id),
-    CHECK (length(password) > 7)
+    PRIMARY KEY (user_id)
 );
 
 -- Table for Games
