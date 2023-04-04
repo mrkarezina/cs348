@@ -24,9 +24,9 @@ class StatTableManager:
 
     def run_all_scripts_with_check(self):
         if self.check_tables_exist():
-            print("Tables already exist. Skipping script execution.")
+            print("SKIPPING DB INITIALIZATION: Tables already exist and are populated.")
         else:
-            print("Tables do not exist. Executing scripts ...")
+            print("INITIALIZING DB: Tables do not exist. Executing scripts ...")
             self.run_all_scripts()
 
     def check_tables_exist(self):
