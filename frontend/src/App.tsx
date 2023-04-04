@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Container, Drawer, Flex, Modal, Slider, Space, Text } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Container, Divider, Drawer, Flex, Group, Modal, Radio, Select, Slider, Space, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
@@ -17,24 +17,42 @@ import UserProfile from './UserProfile';
 import { useCookie } from './utils';
 
 const stats = [
-  {key: 'area', value: 'area', text: 'Area'},
-  {key: 'education_expenditure', value: 'education_expenditure', text: 'Education expenditure'},
-  {key: 'gini_index', value: 'gini_index', text: 'Gini index'},
-  {key: 'population', value: 'population', text: 'Population'},
-  {key: 'real_gdp', value: 'real_gdp', text: 'GDP'},
-  {key: 'unemployment_rate', value: 'unemployment_rate', text: 'Unemployment rate'},
+  {value: 'area', label: 'Area'},
+  {value: 'education_expenditure', label: 'Education expenditure'},
+  {value: 'gini_index', label: 'Gini index'},
+  {value: 'population', label: 'Population'},
+  {value: 'real_gdp', label: 'GDP'},
+  {value: 'unemployment_rate', label: 'Unemployment rate'},
+]
+
+const regions = [
+  {value: '1', label: 'South America'},
+  {value: '2', label: 'East and Southeast Asia'},
+  {value: '3', label: 'Middle East'},
+  {value: '4', label: 'Central America and the Caribbean'},
+  {value: '5', label: 'Antarctica'},
+  {value: '6', label: 'Central Asia'},
+  {value: '7', label: 'Africa'},
+  {value: '8', label: 'Australia and Oceania'},
+  {value: '9', label: 'North America'},
+  {value: '10', label: 'South Asia'},
+  {value: '11', label: 'Europe'},
 ]
 
 export default function App() {
   const [tooltipStats, setTooltipStats] = useState<CountryStats | null>(null);
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
   const [rankingStat, setRankingStat] = useState<string | null>(null);
+  const [rankingBatchNum, setRankingBatchNum] = useState<number | null>(null);
+  const [rankingOrder, setRankingOrder] = useState<string | null>(null);
+  const [rankingRegion, setRankingRegion] = useState<string | null>(null);
 
   const [username, setUsername] = useCookie('username', null);
 
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerTitle, setDrawerTitle] = useState<string | null>(null);
   const [leftDrawerTitle, setLeftDrawerTitle] = useState<string | null>(null);
+
 
   return <>
     <ThemeProvider>
@@ -51,22 +69,40 @@ export default function App() {
           <Drawer title={leftDrawerTitle} position='left' opened={!!leftDrawerTitle} onClose={() => setLeftDrawerTitle(null)} >
             {leftDrawerTitle == 'Leaderboard' && <Leaderboard />}
             {leftDrawerTitle == 'Country Rankings' && <>
-              <Flex direction={'column'}>
-                <Dropdown
-                  placeholder='Area'
-                  style={{ width: 20 }}
-                  selection
-                  onChange={async (event, data) => {
-                    setRankingStat(data.value?.toString().toLowerCase() || '');
-                    if (!!rankingStat) {
-                      getCountryRankings({ statName: rankingStat }).then(data => console.log(data));
-                    }
-                  }}
-                  text={rankingStat!}
-                  options={stats}
+              <Flex direction={'column'} style={{ margin: 6 }}>
+                <Select
+                  label="Select stat name to rank the countries by"
+                  onChange={setRankingStat}
+                  defaultValue={"area"}
+                  data={stats}
+                  searchable
                 />
+                <Divider my="sm"/>
                 <Space h='lg' />
-                <Text>Number of Countries</Text>
+                <Select
+                  label="Select region"
+                  data={regions}
+                  onChange={setRankingRegion}
+                  clearable
+                  searchable
+                />
+                <Divider my="sm"/>
+                <Space h='lg' />
+                <Radio.Group
+                  name="order"
+                  label="Select Order"
+                  description="Select the order in which the countries are displayed"
+                  onChange={setRankingOrder}
+                  defaultValue='DESC'
+                >
+                  <Group mt="xs">
+                    <Radio value="ASC" label="↑"/>
+                    <Radio value="DESC" label="↓"/>
+                  </Group>
+                </Radio.Group>
+                <Divider my="sm"/>
+                <Space h='lg' />
+                <Text >Number of Countries</Text>
                 <Space h='sm' />
                 <Slider
                   marks={[
@@ -77,7 +113,9 @@ export default function App() {
                     { value: 40, label: '40' },
                     { value: 50, label: '' },
                   ]}
+                  onChange={setRankingBatchNum}
                   max={50}
+                  style={{ margin: 6 }}
                 />
               </Flex>
             </>}
