@@ -21,6 +21,12 @@ Database Information
 
 Once the container has been build and the database populate navigate to `http://localhost:5001/` to interact with the web app.
 
+## Updating the Country Statistics
+This factbook has the unique feature of supporting a timeseries data from multiple years. To update the database with new data, first insert this new data into the appropriate CSV file in the `raw_data` folder, make sure to follow the existing format. Then, with the web app up and running, simply open a terminal and run the command:
+```
+docker-compose exec web python manage.py update
+```
+
 # Debugging
 
 ## Frontend
