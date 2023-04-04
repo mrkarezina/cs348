@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Container, Divider, Drawer, Flex, Group, Modal, Radio, Select, Slider, Space, Text } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Container, Divider, Drawer, Flex, Group, Modal, Radio, ScrollArea, Select, Slider, Space, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
@@ -15,6 +15,7 @@ import SignUp from './SignUp';
 import { ThemeProvider } from './ThemeProvider';
 import UserProfile from './UserProfile';
 import { useCookie } from './utils';
+import CountryRankings from './CountryRankings';
 
 const stats = [
   {value: 'area', label: 'Area'},
@@ -44,7 +45,7 @@ export default function App() {
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
   const [rankingStat, setRankingStat] = useState<string | null>(null);
   const [rankingBatchNum, setRankingBatchNum] = useState<number | null>(null);
-  const [rankingOrder, setRankingOrder] = useState<string | null>(null);
+  const [rankingOrder, setRankingOrder] = useState<string>("DESC");
   const [rankingRegion, setRankingRegion] = useState<string | null>(null);
 
   const [username, setUsername] = useCookie('username', null);
@@ -52,6 +53,7 @@ export default function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerTitle, setDrawerTitle] = useState<string | null>(null);
   const [leftDrawerTitle, setLeftDrawerTitle] = useState<string | null>(null);
+  const [countryRankings, setCountryRankings] = useState<Array<[string, number]>>([]);
 
 
   return <>
@@ -70,53 +72,95 @@ export default function App() {
             {leftDrawerTitle == 'Leaderboard' && <Leaderboard />}
             {leftDrawerTitle == 'Country Rankings' && <>
               <Flex direction={'column'} style={{ margin: 6 }}>
-                <Select
-                  label="Select stat name to rank the countries by"
-                  onChange={setRankingStat}
-                  defaultValue={"area"}
-                  data={stats}
-                  searchable
-                />
-                <Divider my="sm"/>
-                <Space h='lg' />
-                <Select
-                  label="Select region"
-                  data={regions}
-                  onChange={setRankingRegion}
-                  clearable
-                  searchable
-                />
-                <Divider my="sm"/>
-                <Space h='lg' />
-                <Radio.Group
-                  name="order"
-                  label="Select Order"
-                  description="Select the order in which the countries are displayed"
-                  onChange={setRankingOrder}
-                  defaultValue='DESC'
-                >
-                  <Group mt="xs">
-                    <Radio value="ASC" label="↑"/>
-                    <Radio value="DESC" label="↓"/>
-                  </Group>
-                </Radio.Group>
-                <Divider my="sm"/>
-                <Space h='lg' />
-                <Text >Number of Countries</Text>
-                <Space h='sm' />
-                <Slider
-                  marks={[
-                    { value: 0, label: '' },
-                    { value: 10, label: '10' },
-                    { value: 20, label: '20' },
-                    { value: 30, label: '30' },
-                    { value: 40, label: '40' },
-                    { value: 50, label: '' },
-                  ]}
-                  onChange={setRankingBatchNum}
-                  max={50}
-                  style={{ margin: 6 }}
-                />
+                  <Select
+                    label="Select stat name to rank the countries by"
+                    onChange={value => {
+                      setRankingStat(value);
+                      if (!!value) {
+                        getCountryRankings({
+                          statName: value,
+                          region_id: rankingRegion,
+                          n: rankingBatchNum,
+                          order: rankingOrder,
+                        }).then(data => setCountryRankings(data));
+                      }
+                    }}
+                    placeholder={"select stat name"}
+                    value={rankingStat}
+                    data={stats}
+                    searchable
+                  />
+                  <Space h='lg' />
+                  <Select
+                    label="Select region"
+                    data={regions}
+                    onChange={value => {
+                      setRankingRegion(value);
+                      if (!!rankingStat) {
+                        getCountryRankings({
+                          statName: rankingStat,
+                          region_id: value,
+                          n: rankingBatchNum,
+                          order: rankingOrder,
+                        }).then(data => setCountryRankings(data));
+                      }
+                    }}
+                    value={rankingRegion}
+                    clearable
+                    searchable
+                  />
+                  <Space h='lg' />
+                  <Radio.Group
+                    name="order"
+                    label="Select Order"
+                    onChange={value => {
+                      setRankingOrder(value);
+                      if (!!rankingStat) {
+                        getCountryRankings({
+                          statName: rankingStat,
+                          region_id: rankingRegion,
+                          n: rankingBatchNum,
+                          order: value,
+                        }).then(data => setCountryRankings(data));
+                      }
+                    }}
+                    value={rankingOrder ? rankingOrder : undefined}
+                  >
+                    <Group mt="xs">
+                      <Radio value="ASC" label="↑"/>
+                      <Radio value="DESC" label="↓"/>
+                    </Group>
+                  </Radio.Group>
+                  <Space h='lg' />
+                  <Text size="sm" >Number of Countries</Text>
+                  <Space h='sm' />
+                  <Slider
+                    marks={[
+                      { value: 0, label: '' },
+                      { value: 10, label: '10' },
+                      { value: 20, label: '20' },
+                      { value: 30, label: '30' },
+                      { value: 40, label: '40' },
+                      { value: 50, label: '' },
+                    ]}
+                    onChange={value => {
+                      setRankingBatchNum(value);
+                      if (!!rankingStat) {
+                        getCountryRankings({
+                          statName: rankingStat,
+                          region_id: rankingRegion,
+                          n: value,
+                          order: rankingOrder,
+                        }).then(data => setCountryRankings(data));
+                      }
+                    }}
+                    value={rankingBatchNum ? rankingBatchNum : undefined}
+                    max={50}
+                    style={{ marginBottom: 40 }}
+                  />
+                  <Space h='lg' />
+                  {countryRankings ? <CountryRankings rankings={countryRankings}/> : <></>}
+                  <Space h='lg' />
               </Flex>
             </>}
           </Drawer>

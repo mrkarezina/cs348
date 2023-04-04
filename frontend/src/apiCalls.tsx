@@ -35,8 +35,9 @@ export interface UserInfo {
 
 export interface FilterRankingInfo {
     statName: string;
-    n?: number;
-    order?: string;
+    region_id: string | null;
+    n: number | null;
+    order: string | null;
 }
 
 export const fetchCountryInfo = async ({ code }: { code: string }): Promise<CountryStats> => {
@@ -97,5 +98,6 @@ export const submitScore = async (username: string, score: number): Promise<Reco
 };
 
 export const getCountryRankings = async (filterRankingInfo: FilterRankingInfo): Promise<Array<[string, number]>> => {
-    return await fetch(`${GET_COUNTRIES_RANKING}${filterRankingInfo.statName}`).then(res => res.json());
+    return await fetch(`${GET_COUNTRIES_RANKING}${filterRankingInfo.statName}${filterRankingInfo.region_id ? '&region_id=' + filterRankingInfo.region_id : ''}${filterRankingInfo.n ? '&limit=' + filterRankingInfo.n : ''}${filterRankingInfo.order ? '&order_by=' + filterRankingInfo.order : ''}`)
+        .then(res => res.json());
 }
