@@ -1,4 +1,4 @@
-# CS 348 Project
+# The Country Factbook
 
 ## Description
 A world stats interface that allows you to learn about different countries and play games.
